@@ -1,0 +1,736 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   FISHIFY, "LOTA"
+   Branco de gelo, azul da marca, e o mar como única imagem. A página é
+   clara do topo ao rodapé; a variação vem das faixas de azul muito claro,
+   nunca do scroll.
+
+   PROIBIÇÕES GLOBAIS (regras da casa):
+   • Um só acento: o azul do logótipo. Mais nada.
+   • Cores sempre por variável. Um hex à mão num componente é um bug.
+   • Zero traços decorativos: sem barras junto a rótulos, sem réguas de
+     gradiente, sem barras de acento ao lado de números.
+   • Nunca `tel:` num CTA de navegação. Em macOS abre o FaceTime.
+   • pt-PT. E nada de traço a meio de frase no texto visível.
+   • `prefers-reduced-motion` respeitado em tudo o que se mexe.
+   ========================================================================= */
+
+:root {
+  /* ---------- superfícies ----------
+     O branco é PURO de propósito, e não off-white: os 61 frames do peixe
+     foram achatados sobre #ffffff para pesarem 2,3 MB em vez de 9,4 MB com
+     canal alfa. Mudar o papel faz aparecer um rectângulo à volta do peixe. */
+  --paper: #ffffff;
+  --paper-2: #eff5fa; /* faixa de água rasa: secções alternadas */
+  --paper-3: #dce9f4; /* cards dentro das faixas, hovers */
+  --deep: #0e2237; /* azul de fundo do mar: rodapé e chapas de ênfase */
+
+  /* ---------- tinta ---------- */
+  --ink: #0e1a24; /* quase-preto azulado, nunca #000 */
+  --ink-2: #3f5361; /* texto secundário e ledes */
+  --ink-3: #5a6d7b; /* legendas e metadados */
+
+  /* ---------- acento único ----------
+     Amostrado do logótipo (#4C7FB4), não escolhido. Sobre branco dá 3,54:1,
+     por isso NÃO serve para texto pequeno: para isso existe o --accent-deep,
+     que dá 6,05:1. O claro é para superfícies, o fundo é para tinta. */
+  --accent: #4c7fb4;
+  --accent-deep: #2f5e90;
+  --accent-soft: #e6eff7;
+  --on-accent: #ffffff;
+
+  /* ---------- linhas ---------- */
+  --hair: rgba(14, 26, 36, 0.1);
+  --hair-strong: rgba(14, 26, 36, 0.2);
+  --hair-light: rgba(255, 255, 255, 0.24); /* sobre vídeo e sobre --deep */
+
+  /* ---------- véu do vídeo ----------
+     O hero é filmagem de drone em dia claro: céu quase branco na metade de
+     cima. Sem véu, o display branco desaparece. 0,52 de azul profundo põe o
+     pior frame em 6,1:1 para o título e 4,7:1 para o lede. */
+  --veil-hero: 0.52;
+
+  /* ---------- tipografia ---------- */
+  --font-display: var(--font-outfit), system-ui, sans-serif;
+  --font-sans: var(--font-instrument), system-ui, -apple-system, sans-serif;
+
+  /* ---------- métrica ---------- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --pad: clamp(20px, 5vw, 64px);
+  --radius: 14px;
+
+  /* ---------- pontes utilitárias ---------- */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --border: var(--hair);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-deep: var(--deep);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-hair: var(--hair);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+
+  --radius-lg: var(--radius);
+}
+
+/* As regras abaixo vivem nas CAMADAS do Tailwind, e não soltas.
+   CSS sem camada ganha SEMPRE a CSS em camada, por muito baixa que seja a
+   especificidade: com `a { text-decoration: none }` solto, a utilitária
+   `underline` deixava de fazer efeito, e `.kicker` comia um `text-white/80`
+   aplicado no mesmo elemento. Dentro de `base` e `components`, as
+   utilitárias voltam a ter a última palavra, que é como devem ter. */
+
+@layer base {
+  /* =========================================================================
+     BASE
+     ========================================================================= */
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--paper);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.66;
+    /* NADA de `overflow-x: hidden` aqui. Faz do <body> um contentor de
+       scroll, e um contentor de scroll é o fim do `position: sticky` de
+       tudo o que está lá dentro: o palco do peixe passava de raspão em vez
+       de ficar preso. O `overflow-x: clip` no <html> corta o transbordo
+       horizontal sem criar contentor nenhum, e é o que faz esse trabalho. */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (min-width: 1024px) {
+    body {
+      font-size: 17px;
+    }
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-deep);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* =========================================================================
+     ESTRUTURA
+     ========================================================================= */
+
+  .shell {
+    width: 100%;
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: var(--pad);
+  }
+
+  .shell--narrow {
+    max-width: 760px;
+  }
+
+  .section {
+    padding-block: clamp(56px, 11vw, 128px);
+  }
+
+  .section--tight {
+    padding-block: clamp(40px, 8vw, 88px);
+  }
+
+  .band {
+    background: var(--paper-2);
+  }
+
+  .band--deep {
+    background: var(--deep);
+    color: #eaf2f9;
+  }
+
+  .band--deep .kicker {
+    color: #9dc2e2;
+  }
+
+  .band--deep .lede,
+  .band--deep .muted {
+    color: #b9cfe1;
+  }
+
+  /* =========================================================================
+     TIPOGRAFIA
+     ========================================================================= */
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .display--xl {
+    font-size: clamp(2.4rem, 9.5vw, 4.9rem);
+  }
+
+  .display--lg {
+    font-size: clamp(1.95rem, 6.4vw, 3.3rem);
+  }
+
+  .display--md {
+    font-size: clamp(1.45rem, 4.4vw, 2.1rem);
+  }
+
+  .kicker {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--accent-deep);
+  }
+
+  /* Sobre vídeo o azul do acento cai para 2,1:1. Aqui o rótulo é branco
+     esbatido, que sobre o véu do hero dá 8,4:1. */
+  .kicker--light {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .lede {
+    font-size: clamp(1.02rem, 2.6vw, 1.2rem);
+    line-height: 1.62;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .muted {
+    color: var(--ink-3);
+  }
+
+  .prose p {
+    margin-block: 0 1.05em;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  .prose p:last-child {
+    margin-bottom: 0;
+  }
+
+  .prose strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* =========================================================================
+     BOTÕES
+     ========================================================================= */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55em;
+    min-height: 48px;
+    padding: 0.72em 1.35em;
+    border: 1px solid var(--hair-strong);
+    border-radius: 999px;
+    font-size: 0.98rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--ink);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color 0.25s var(--ease),
+      border-color 0.25s var(--ease),
+      transform 0.25s var(--ease);
+  }
+
+  .btn:hover {
+    background: var(--paper-3);
+    border-color: transparent;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn--solid {
+    background: var(--accent-deep);
+    border-color: transparent;
+    color: var(--on-accent);
+  }
+
+  .btn--solid:hover {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  /* Sobre vídeo e sobre azul profundo: a aresta clara é a única coisa que
+     separa o botão do fundo, por isso não pode cair para o --hair escuro. */
+  .btn--ghost {
+    border-color: var(--hair-light);
+    color: #ffffff;
+    backdrop-filter: blur(6px);
+    background: rgba(14, 34, 55, 0.28);
+  }
+
+  .btn--ghost:hover {
+    background: rgba(14, 34, 55, 0.5);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .btn--block {
+    width: 100%;
+  }
+
+  @media (min-width: 480px) {
+    .btn--block {
+      width: auto;
+    }
+  }
+
+  /* =========================================================================
+     PAINÉIS
+     ========================================================================= */
+
+  .panel {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius);
+    padding: clamp(20px, 5vw, 32px);
+  }
+
+  .band .panel {
+    border-color: transparent;
+  }
+
+  .panel--soft {
+    background: var(--accent-soft);
+    border-color: transparent;
+  }
+
+  /* =========================================================================
+     REVELAR AO SCROLL
+     Nasce a 0 e é o IntersectionObserver que o traz. Sem rootMargin negativo:
+     já partiu o fim de uma página noutro projecto.
+     ========================================================================= */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.75s var(--ease),
+      transform 0.75s var(--ease);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* =========================================================================
+     HERO EM VÍDEO
+     ========================================================================= */
+
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    color: #ffffff;
+  }
+
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+
+  .hero__veil {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(14, 34, 55, 0.58) 0%,
+        rgba(14, 34, 55, 0.28) 34%,
+        rgba(14, 34, 55, 0.72) 78%,
+        rgba(14, 34, 55, 0.92) 100%
+      ),
+      rgba(14, 34, 55, var(--veil-hero));
+  }
+
+  .hero__body {
+    padding-block: clamp(96px, 18vh, 160px) clamp(40px, 9vh, 72px);
+  }
+
+  .hero .lede {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* =========================================================================
+     PALCO DO PEIXE: sequência de frames conduzida pelo scroll
+     ========================================================================= */
+
+  .fish {
+    position: relative;
+  }
+
+  .fish__stage {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100svh;
+    padding-block: 72px 32px;
+  }
+
+  .fish__frame {
+    width: min(62vw, 240px);
+    height: auto;
+    aspect-ratio: 440 / 1105;
+    object-fit: contain;
+  }
+
+  @media (min-width: 768px) {
+    .fish__frame {
+      width: min(30vw, 330px);
+    }
+  }
+
+  .fish__caption {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(18px, 4vh, 40px);
+    transform: translateX(-50%);
+    width: min(100%, 420px);
+    padding-inline: var(--pad);
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--ink-3);
+    transition: opacity 0.4s var(--ease);
+  }
+
+  /* =========================================================================
+     CARTÕES DOS REELS
+     ========================================================================= */
+
+  .reels {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 68vw;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-inline: var(--pad);
+    /* Sem isto o snap alinha o primeiro cartão ao início do scrollport, que
+       ignora o padding: a fila abria já com 20 px de scroll feitos e o
+       primeiro reel entrava cortado pela margem do ecrã. */
+    scroll-padding-inline: var(--pad);
+    padding-block-end: 8px;
+    margin-inline: calc(var(--pad) * -1);
+    scrollbar-width: none;
+  }
+
+  .reels::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .reels {
+      grid-auto-columns: 34vw;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .reels {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(5, 1fr);
+      grid-auto-columns: auto;
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+  }
+
+  .reel {
+    position: relative;
+    display: block;
+    scroll-snap-align: start;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--paper-3);
+    aspect-ratio: 9 / 16;
+    transition: transform 0.4s var(--ease);
+  }
+
+  .reel:hover {
+    transform: translateY(-4px);
+  }
+
+  .reel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .reel__meta {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 48px 14px 14px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: #ffffff;
+    background: linear-gradient(to top, rgba(9, 22, 36, 0.86), transparent);
+  }
+
+  /* =========================================================================
+     NAVBAR EM CÁPSULA
+     ========================================================================= */
+
+  .nav {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    z-index: 60;
+    width: min(100% - 24px, 1180px);
+    transform: translateX(-50%);
+    transition:
+      transform 0.4s var(--ease),
+      opacity 0.3s var(--ease);
+  }
+
+  .nav[data-hidden="true"] {
+    transform: translate(-50%, calc(-100% - 20px));
+    opacity: 0;
+  }
+
+  .nav__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 8px 8px 16px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    transition:
+      background-color 0.35s var(--ease),
+      border-color 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+
+  /* No topo do hero a cápsula é invisível e o logótipo é branco. Assim que a
+     página rola, ganha corpo branco e a tinta volta ao azul. */
+  .nav[data-solid="true"] .nav__bar {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--hair);
+    box-shadow: 0 8px 30px rgba(14, 26, 36, 0.09);
+    backdrop-filter: blur(14px);
+  }
+
+  .nav__logo {
+    height: 22px;
+    width: auto;
+    color: #ffffff;
+    transition: color 0.35s var(--ease);
+  }
+
+  .nav[data-solid="true"] .nav__logo {
+    color: var(--accent);
+  }
+
+  .nav__links {
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+
+  @media (min-width: 900px) {
+    .nav__links {
+      display: flex;
+    }
+  }
+
+  .nav__link {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    color: #ffffff;
+    transition:
+      background-color 0.25s var(--ease),
+      color 0.35s var(--ease);
+  }
+
+  .nav[data-solid="true"] .nav__link {
+    color: var(--ink-2);
+  }
+
+  .nav__link:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .nav[data-solid="true"] .nav__link:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+  }
+
+  .nav__link[aria-current="page"] {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .nav[data-solid="true"] .nav__link[aria-current="page"] {
+    color: var(--accent-deep);
+  }
+
+  /* Painel do menu em ecrãs pequenos */
+  .nav__panel {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid var(--hair);
+    box-shadow: 0 16px 40px rgba(14, 26, 36, 0.14);
+    backdrop-filter: blur(14px);
+  }
+
+  @media (min-width: 900px) {
+    .nav__panel {
+      display: none;
+    }
+  }
+
+  .nav__panel a {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: var(--ink);
+    font-size: 1.02rem;
+  }
+
+  .nav__panel a:hover {
+    background: var(--accent-soft);
+  }
+
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid var(--hair-light);
+    color: #ffffff;
+    background: rgba(14, 34, 55, 0.24);
+  }
+
+  .nav[data-solid="true"] .nav__toggle {
+    border-color: var(--hair);
+    color: var(--ink);
+    background: transparent;
+  }
+
+  @media (min-width: 900px) {
+    .nav__toggle {
+      display: none;
+    }
+  }
+
+  /* =========================================================================
+     LISTAS DE FACTOS
+     ========================================================================= */
+
+  .facts {
+    display: grid;
+    gap: 2px;
+    background: var(--hair);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .facts > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 18px;
+    padding: 14px 18px;
+    background: var(--paper);
+  }
+
+  .band .facts > div {
+    background: var(--paper-2);
+  }
+}
