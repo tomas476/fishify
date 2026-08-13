@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Faq from "@/components/faq";
 import Passos from "@/components/passos";
-import Zones from "@/components/zones";
-import { WA_MESSAGES, wa } from "@/content/site";
+import MapaZonas from "@/components/entregas";
 
 export const metadata: Metadata = {
   title: "Entregas",
@@ -21,12 +20,12 @@ export default function Entregas() {
             Levamos o peixe a cinco zonas do país.
           </h1>
           <p className="lede mt-6 max-w-[54ch]" data-reveal>
-            A carrinha sai de Peniche com o peixe escolhido nessa manhã e faz uma
-            zona de cada vez. Escolha a sua abaixo e abrimos a conversa já com o
-            nome da zona escrito.
+            A carrinha sai de Peniche com o peixe escolhido nessa manhã e faz
+            uma zona de cada vez. Toque na sua no mapa: mostramos os concelhos
+            que fazemos e abrimos a conversa já com o nome dela escrito.
           </p>
           <div className="mt-12">
-            <Zones />
+            <MapaZonas />
           </div>
         </div>
       </section>
@@ -44,19 +43,7 @@ export default function Entregas() {
 
       <Faq />
 
-      <section className="section--tight">
-        <div className="shell shell--narrow text-center">
-          <a
-            className="btn btn--solid"
-            data-reveal
-            href={wa(WA_MESSAGES.schedule)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Agendar uma entrega
-          </a>
-        </div>
-      </section>
+
     </>
   );
 }

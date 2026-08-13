@@ -3,7 +3,7 @@ import FishExplode from "@/components/fish-explode";
 import HeroVideo from "@/components/hero-video";
 import Passos from "@/components/passos";
 import ReelsFan from "@/components/reels-fan";
-import Zones from "@/components/zones";
+import Entregas from "@/components/entregas";
 import { BRAND, PILLARS, STORY, WA_MESSAGES, wa } from "@/content/site";
 
 export default function Home() {
@@ -112,8 +112,12 @@ export default function Home() {
           >
             Onde a nossa carrinha chega.
           </h2>
-          <div className="mt-10">
-            <Zones />
+          <p className="lede mt-5 max-w-[52ch]" data-reveal>
+            Toque na sua zona para ver os concelhos que fazemos e para abrir a
+            conversa já com o nome dela escrito.
+          </p>
+          <div className="mt-12">
+            <Entregas />
           </div>
         </div>
       </section>
