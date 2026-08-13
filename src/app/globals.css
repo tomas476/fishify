@@ -804,127 +804,115 @@
 
   .passos-com-peixe {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(84px, 0.3fr);
-    gap: clamp(12px, 4vw, 48px);
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(112px, 0.34fr);
+    gap: clamp(8px, 3vw, 40px);
+    align-items: center; /* o peixe fica a meio da altura dos três passos */
   }
 
   @media (min-width: 900px) {
     .passos-com-peixe {
-      grid-template-columns: minmax(0, 1fr) minmax(180px, 0.38fr);
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 0.42fr);
     }
   }
 
+  /* Encostado à DIREITA e não centrado na coluna: é isso que o afasta do
+     texto dos passos sem lhe roubar largura. */
   .passos__peixe {
-    /* Acompanha a leitura dos três passos em vez de passar de raspão. */
-    position: sticky;
-    top: 104px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
   }
 
   .fish__frame {
     width: 100%;
-    max-width: 300px;
+    max-width: 190px;
     height: auto;
   }
 
-  /* =========================================================================
-     REELS EM PILHA VERTICAL
+  @media (min-width: 900px) {
+    .fish__frame {
+      max-width: 340px;
+    }
+  }
 
-     Geometria do `vertical-image-stack` do site do Tomás Marques. O palco
-     é MAIS ALTO do que o cartão de propósito: é essa folga que faz a pilha
-     ler-se como pilha em vez de os cartões se atropelarem.
+  /* =========================================================================
+     REELS EM CARROSSEL (coverflow)
+
+     Medidas do site do Tomás Marques que está no ar: palco de 25rem, 33rem
+     a partir do médio, `perspective: 1000px` e corte no que sai. Cartão de
+     12rem por 21,375rem, 16rem por 28,5rem no médio, que é 9:16.
      ========================================================================= */
 
-  .reels-pilha {
-    display: flex;
-    align-items: center;
-    gap: clamp(12px, 4vw, 40px);
-  }
-
-  .reels-pilha__nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    flex: 0 0 auto;
-  }
-
-  .reels-pilha__seta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--hair-strong);
-    border-radius: 999px;
-    color: var(--ink);
-    background: var(--paper);
-    touch-action: manipulation;
-    transition:
-      background-color 0.25s var(--ease),
-      border-color 0.25s var(--ease);
-  }
-
-  .reels-pilha__seta:hover {
-    background: var(--accent-soft);
-    border-color: transparent;
-  }
-
-  .reels-pilha__seta svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .reels-pilha__conta {
-    font-size: 0.9rem;
-    font-variant-numeric: tabular-nums;
-    text-align: center;
-  }
-
-  .reels-pilha__palco {
+  .cf {
     position: relative;
-    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* O palco tem de levar a altura do cartão MAIS o que os vizinhos
-       sobem e descem, senão a pilha escapa por cima do título da secção,
-       que foi o que aconteceu à primeira. Com um cartão de ~440 px, o
-       vizinho de segundo plano estende-se mais ~210 px para cada lado. */
-    height: clamp(560px, 148vw, 840px);
-    perspective: 1200px;
-    /* Rede de segurança: os cartões de segundo plano sobem e descem mais
-       do que a caixa, e sem isto trepavam por cima do título da secção.
-       Cortados na aresta do palco, leem-se como "há mais por cima e por
-       baixo", que é exactamente o que uma pilha deve dizer. */
+    width: 100%;
+    height: 25rem;
     overflow: hidden;
+    perspective: 1000px;
+    touch-action: pan-y pinch-zoom;
+    cursor: grab;
+    user-select: none;
   }
 
-  .reels-pilha__palco:focus-visible {
+  .cf:active {
+    cursor: grabbing;
+  }
+
+  @media (min-width: 768px) {
+    .cf {
+      height: 33rem;
+    }
+  }
+
+  .cf:focus-visible {
     outline: 2px solid var(--accent-deep);
-    outline-offset: 8px;
+    outline-offset: 4px;
     border-radius: var(--radius);
   }
 
-  .reels-pilha__cartao {
+  .cf__cartao {
     position: absolute;
-    width: min(70%, 290px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12rem;
+    height: 21.375rem;
+    transition: all 0.5s var(--ease);
+  }
+
+  @media (min-width: 768px) {
+    .cf__cartao {
+      width: 16rem;
+      height: 28.5rem;
+    }
+  }
+
+  .cf__moldura {
+    position: relative;
+    width: 100%;
+    height: 100%;
     border-radius: var(--radius);
     overflow: hidden;
     background: var(--paper-3);
-    box-shadow: 0 18px 44px rgba(11, 32, 53, 0.22);
-    cursor: pointer;
+    border: 1px solid var(--hair);
   }
 
-  .reels-pilha__media {
+  .cf__cartao[data-dist="0"] .cf__moldura {
+    box-shadow: 0 18px 44px rgba(11, 32, 53, 0.24);
+  }
+
+  .cf__media {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
   }
 
-  .reels-pilha__som {
+  .cf__som {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -940,21 +928,69 @@
     transition: background-color 0.25s var(--ease);
   }
 
-  .reels-pilha__som:hover {
-    background: rgba(9, 22, 36, 0.8);
+  .cf__som:hover {
+    background: rgba(9, 22, 36, 0.82);
   }
 
-  .reels-pilha__meta {
+  .cf__meta {
     position: absolute;
     inset: auto 0 0 0;
     display: flex;
     align-items: center;
     gap: 0.4em;
-    padding: 48px 14px 14px;
-    font-size: 0.86rem;
+    padding: 44px 13px 13px;
+    font-size: 0.84rem;
     font-weight: 500;
     color: #ffffff;
     background: linear-gradient(to top, rgba(9, 22, 36, 0.86), transparent);
+  }
+
+  .cf__seta {
+    position: absolute;
+    top: 50%;
+    z-index: 20;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    transform: translateY(-50%);
+    border: 1px solid var(--hair-strong);
+    border-radius: 999px;
+    color: var(--ink);
+    background: var(--paper);
+    touch-action: manipulation;
+    transition:
+      background-color 0.25s var(--ease),
+      border-color 0.25s var(--ease);
+  }
+
+  .cf__seta:hover {
+    background: var(--accent-soft);
+    border-color: transparent;
+  }
+
+  .cf__seta svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cf__seta--esq {
+    left: 4px;
+  }
+
+  .cf__seta--dir {
+    right: 4px;
+  }
+
+  @media (min-width: 768px) {
+    .cf__seta--esq {
+      left: 24px;
+    }
+
+    .cf__seta--dir {
+      right: 24px;
+    }
   }
 
   /* =========================================================================
@@ -1283,34 +1319,35 @@
     color: var(--ink);
   }
 
-  .campo {
+  /* Campo com LINHA por baixo e não caixa, como no formulário do Marques:
+     fundo transparente, sem padding lateral, e a linha a acender no foco. */
+  .linha {
     width: 100%;
-    min-height: 50px;
-    padding: 12px 15px;
-    border: 1px solid var(--hair-strong);
-    border-radius: 12px;
-    background: var(--paper);
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--hair-strong);
+    border-radius: 0;
+    background: transparent;
     color: var(--ink);
     font: inherit;
-    transition:
-      border-color 0.2s var(--ease),
-      box-shadow 0.2s var(--ease);
+    transition: border-color 0.2s var(--ease);
   }
 
-  .campo::placeholder {
+  .linha::placeholder {
     color: var(--ink-3);
   }
 
-  .campo:focus {
+  .linha:focus {
     outline: none;
-    border-color: var(--accent-deep);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    border-bottom-color: var(--accent-deep);
+    border-bottom-width: 2px;
+    padding-bottom: 11px; /* a linha engorda sem o campo saltar */
   }
 
   /* O erro NÃO é só a cor: leva também o texto por baixo, porque a cor
      sozinha não chega a quem não a distingue. */
-  .campo--erro {
-    border-color: #a8321f;
+  .linha--erro {
+    border-bottom-color: #a8321f;
   }
 
   .formulario__erro {
@@ -1318,9 +1355,79 @@
     color: #a8321f;
   }
 
-  textarea.campo {
-    min-height: 120px;
+  textarea.linha {
+    min-height: 110px;
     resize: vertical;
+  }
+
+  /* A marca a nadar, ao lado do formulário. Redonda porque o vídeo já é
+     o círculo do logótipo: nada de moldura por cima. */
+  .marca-animada {
+    width: clamp(96px, 26vw, 150px);
+    height: auto;
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(11, 32, 53, 0.18);
+  }
+
+  /* ---------- os três passos ---------- */
+
+  .passos-barra {
+    display: flex;
+    gap: 6px;
+  }
+
+  .passos-barra__s {
+    height: 3px;
+    flex: 1 1 0;
+    border-radius: 999px;
+    background: var(--hair);
+    transition: background-color 0.4s var(--ease);
+  }
+
+  .passos-barra__s[data-feito="true"] {
+    background: var(--accent-deep);
+  }
+
+  .passos-conta {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+  }
+
+  .passo-campos {
+    min-width: 0;
+    margin-top: clamp(20px, 4vw, 30px);
+    border: 0;
+    padding: 0;
+  }
+
+  .passo-legenda {
+    font-family: var(--font-display);
+    font-size: 1.06rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .passo-grelha {
+    display: grid;
+    gap: 22px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .passo-grelha {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 28px;
+    }
+  }
+
+  .passos-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: clamp(24px, 5vw, 36px);
   }
 
   /* =========================================================================

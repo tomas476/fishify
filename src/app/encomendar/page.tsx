@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import EncomendaForm from "@/components/encomenda-form";
 import Horario from "@/components/horario";
+import MarcaAnimada from "@/components/marca-animada";
 import { BRAND } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -36,6 +37,8 @@ export default function EncomendarPagina() {
           </div>
 
           <aside data-reveal="escala">
+            <MarcaAnimada className="marca-animada mb-8" />
+
             <h2 className="display display--md">Quando respondemos</h2>
             <div className="mt-5">
               <Horario />

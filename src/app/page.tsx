@@ -7,8 +7,9 @@ import FishExplode from "@/components/fish-explode";
 import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
 import Horario from "@/components/horario";
+import MarcaAnimada from "@/components/marca-animada";
 import Passos from "@/components/passos";
-import ReelsStack from "@/components/reels-stack";
+import ReelsCarrossel from "@/components/reels-carrossel";
 import { BRAND, WA_MESSAGES, wa } from "@/content/site";
 
 /* =========================================================================
@@ -127,7 +128,7 @@ export default function Home() {
             {BRAND.followers} pessoas veem o nosso peixe todas as semanas.
           </h2>
           <div className="mt-10">
-            <ReelsStack />
+            <ReelsCarrossel />
           </div>
           <a
             className="btn mt-8"
@@ -164,6 +165,8 @@ export default function Home() {
             </div>
 
             <aside data-reveal="escala">
+              <MarcaAnimada className="marca-animada mb-8" />
+
               <h3 className="display display--md">Quando respondemos</h3>
               <div className="mt-5">
                 <Horario />
