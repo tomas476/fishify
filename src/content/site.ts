@@ -13,7 +13,12 @@ export const BRAND = {
   name: "Fishify",
   tagline: "A frescura do mar de Peniche à sua mesa",
   domain: "fishify.pt",
-  url: "https://fishify.pt",
+  /* O domínio final é fishify.pt, mas enquanto o site vive na
+     pré-visualização é o endereço dela que tem de entrar nas etiquetas de
+     partilha: um og:image apontado para um domínio que ainda não existe
+     dá cartão em branco no WhatsApp. Definido por variável de ambiente no
+     build, com o destino final como valor por omissão. */
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://fishify.pt",
   email: "geral@fishify.pt",
   /** Só para `wa.me`. Nunca usar em `tel:` num CTA de navegação. */
   whatsapp: "351934243797",

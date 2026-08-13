@@ -4,7 +4,10 @@ O site é estático (`output: "export"` no `next.config.ts`). Publicar é
 construir e sincronizar uma pasta.
 
 ```bash
-npm run build                       # gera out/
+# O NEXT_PUBLIC_SITE_URL entra nas etiquetas de partilha. Sem ele, o
+# og:image aponta para https://fishify.pt, que ainda nao existe, e o
+# cartao do WhatsApp sai em branco.
+NEXT_PUBLIC_SITE_URL="https://fishify.imogrow.pt" npm run build
 rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519" \
   out/ filipe@167.86.123.215:~/fishify-static/
 ```

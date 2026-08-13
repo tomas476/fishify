@@ -19,9 +19,12 @@ import { useEffect, useRef } from "react";
    as bolhas atravessam o ecrã independentemente de onde a página está.
    ========================================================================= */
 
-/** Menos bolhas em ecrãs estreitos: a mesma densidade a 390 px lia como sujidade. */
+/* Subiu de 16/26 para 30/48: com a contagem antiga e a opacidade antiga
+   as bolhas quase não se viam, e o fundo lia-se como azul liso. Menos em
+   ecrãs estreitos continua a fazer sentido, mas a diferença é de
+   densidade e não de existirem. */
 function bubbleCount(width: number) {
-  return width < 700 ? 16 : 26;
+  return width < 700 ? 30 : 48;
 }
 
 type Bubble = {
@@ -37,7 +40,9 @@ type Bubble = {
 function makeBubble(w: number, h: number, seed: number, atBottom: boolean): Bubble {
   /* Sem Math.random na inicialização do primeiro ecrã não valeria a pena:
      isto é decoração, e uma distribuição pseudo-aleatória simples chega. */
-  const r = 2 + Math.random() * 9;
+  /* Raios de 3 a 16: as de 2 px eram pó. Um leque mais largo faz-se notar
+     porque as grandes leem-se e as pequenas dão profundidade. */
+  const r = 3 + Math.random() * 13;
   return {
     x: Math.random() * w,
     /* Ao arrancar, espalha-as pela altura toda. Depois, cada bolha que
@@ -46,11 +51,12 @@ function makeBubble(w: number, h: number, seed: number, atBottom: boolean): Bubb
     y: atBottom ? h + r + Math.random() * 120 : Math.random() * h,
     r,
     /* As grandes sobem mais depressa, como na água. */
-    speed: 0.18 + r * 0.045,
+    speed: 0.16 + r * 0.038,
     drift: 6 + Math.random() * 16,
     phase: seed * 1.7,
-    /* As pequenas são mais discretas: a opacidade acompanha o raio. */
-    alpha: 0.1 + Math.min(r, 9) * 0.028,
+    /* As pequenas continuam mais discretas, mas o piso subiu: a 0,1 de
+       branco sobre #e7f2fb a bolha era invisível fora de um ecrã calibrado. */
+    alpha: 0.26 + Math.min(r, 14) * 0.026,
   };
 }
 
@@ -128,14 +134,16 @@ export default function SeaBackground() {
 
         /* Aresta e reflexo: sem eles a bolha lê como um ponto branco, e
            não como ar dentro de água. */
-        ctx.strokeStyle = `rgba(255, 255, 255, ${b.alpha * 2.1})`;
-        ctx.lineWidth = 1;
+        /* A aresta é o que dá a leitura de bolha. Vai mais forte do que o
+           interior, e mais grossa nas grandes. */
+        ctx.strokeStyle = `rgba(255, 255, 255, ${Math.min(1, b.alpha * 2.4)})`;
+        ctx.lineWidth = b.r > 9 ? 1.5 : 1;
         ctx.stroke();
 
         if (b.r > 4) {
           ctx.beginPath();
-          ctx.arc(x - b.r * 0.32, b.y - b.r * 0.34, b.r * 0.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${b.alpha * 3})`;
+          ctx.arc(x - b.r * 0.32, b.y - b.r * 0.34, b.r * 0.22, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, b.alpha * 2.6)})`;
           ctx.fill();
         }
       }
