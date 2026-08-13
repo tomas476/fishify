@@ -13,17 +13,10 @@ export default function Home() {
       <section className="hero">
         <HeroVideo />
         <div className="shell hero__body">
-          <p className="kicker kicker--light">
-            Da lota de {BRAND.origin} para a sua cozinha
-          </p>
-          <h1 className="display display--xl mt-4 max-w-[16ch]">
-            {BRAND.tagline}
-          </h1>
-          <p className="lede mt-6 max-w-[46ch]">
-            Somos o Rui e a Beatriz. Escolhemos o peixe na lota de manhã e
-            entregamos em sua casa no dia da sua zona, ainda com o mar em cima.
-          </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          {/* Só a frase. O rótulo por cima e o parágrafo por baixo saíram
+              por decisão do cliente: o hero diz uma coisa e mais nada. */}
+          <h1 className="display display--xl max-w-[16ch]">{BRAND.tagline}</h1>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <a
               className="btn btn--solid btn--block"
               href={wa(WA_MESSAGES.order)}

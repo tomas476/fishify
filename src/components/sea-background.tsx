@@ -72,6 +72,23 @@ export default function SeaBackground() {
     let h = 0;
     let last = 0;
 
+    /* As bolhas NÃO podem passar por cima do vídeo do hero. O canvas é
+       fixo e cobre o ecrã todo, por isso corta-se-lhe o topo na altura em
+       que o hero acaba: enquanto o vídeo está à vista as bolhas nascem e
+       morrem por baixo dele, e assim que ele sai por cima o corte vai a
+       zero e elas voltam a subir até ao topo do ecrã.
+
+       `clip-path` e não uma segunda camada: corta na composição, sem
+       obrigar a redesenhar nada. */
+
+    const recortar = () => {
+      const hero = document.querySelector(".hero");
+      const corte = hero
+        ? Math.max(0, Math.min(h, hero.getBoundingClientRect().bottom))
+        : 0;
+      canvas.style.clipPath = `inset(${corte}px 0 0 0)`;
+    };
+
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = window.innerWidth;
@@ -88,6 +105,7 @@ export default function SeaBackground() {
       if (bubbles.length !== n) {
         bubbles = Array.from({ length: n }, (_, i) => makeBubble(w, h, i, false));
       }
+      recortar();
     };
 
     const draw = (t: number) => {
@@ -162,15 +180,28 @@ export default function SeaBackground() {
       start();
     };
 
+    let recorteAgendado = false;
+    const onScroll = () => {
+      if (recorteAgendado) return;
+      recorteAgendado = true;
+      requestAnimationFrame(() => {
+        recorteAgendado = false;
+        recortar();
+      });
+    };
+
     resize();
+    recortar();
     sync();
 
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", resize, { passive: true });
     document.addEventListener("visibilitychange", sync);
     reduced.addEventListener("change", sync);
 
     return () => {
       stop();
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", sync);
       reduced.removeEventListener("change", sync);

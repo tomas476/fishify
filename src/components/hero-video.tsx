@@ -83,6 +83,11 @@ export default function HeroVideo() {
         ref={ref}
         className="hero__video"
         poster="/img/hero-poster.webp"
+        /* `autoPlay` no atributo E o play() no efeito. O atributo faz o
+           vídeo arrancar mesmo que o JS falhe ou chegue tarde, que foi o
+           que se viu num telemóvel quando o servidor de desenvolvimento
+           serviu um erro; o efeito continua a mandar nele depois. */
+        autoPlay
         muted
         loop
         playsInline

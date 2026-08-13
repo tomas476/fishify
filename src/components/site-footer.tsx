@@ -1,73 +1,55 @@
 import Link from "next/link";
-import { BRAND, NAV, WA_MESSAGES, wa } from "@/content/site";
-import Logo from "@/components/logo";
+import { BRAND, NAV } from "@/content/site";
+import { LogoMark } from "@/components/logo";
 
 /* =========================================================================
-   RODAPÉ COMPACTO
+   RODAPÉ
 
-   A primeira versão tinha os sete dias da semana em lista, três colunas de
-   links e um logótipo grande: ocupava mais de um ecrã inteiro só para dizer
-   o que já estava na página dos contactos. Agora é uma faixa: logótipo,
-   uma linha de horário, os links em fila e o WhatsApp. O detalhe do horário
-   dia a dia vive em /contactos, que é onde alguém o vai procurar.
+   Terceira versão, e a regra agora é dura: o rodapé cabe numa faixa e não
+   repete nada. Nem horário, nem botão de encomenda, nem contactos. Tudo
+   isso vive em /contactos, que está a um toque de distância, e o botão de
+   encomendar já aparece três vezes acima.
+
+   Duas linhas em telemóvel, uma em desktop.
    ========================================================================= */
-
-/** Os sete dias resumidos numa linha. Segunda é o dia de folga. */
-const HORARIO_CURTO = "Terça a domingo, das 08:00 às 14:00";
 
 export default function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="band--deep">
-      <div className="shell py-10">
-        <div className="flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-col gap-3">
-            <Logo className="h-5 w-auto text-white" />
-            <p className="text-[0.92rem] text-[#b9cfe1]">{HORARIO_CURTO}</p>
-          </div>
+      <div className="shell flex flex-col items-center gap-4 py-6 text-[0.85rem] sm:flex-row sm:justify-between">
+        <p className="flex items-center gap-2 text-[#b9cfe1]">
+          <LogoMark className="h-4 w-4 text-white" />
+          {year} {BRAND.name}. Peixe da lota de {BRAND.origin}.
+        </p>
 
-          <nav aria-label="Rodapé">
-            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[0.95rem]">
-              {NAV.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="underline underline-offset-4">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <a
-                  href={BRAND.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4"
-                >
-                  Instagram
-                </a>
-              </li>
-              <li>
-                <Link href="/privacidade" className="underline underline-offset-4">
-                  Privacidade
+        <nav aria-label="Rodapé">
+          <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+            {NAV.slice(1).map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="underline underline-offset-4">
+                  {item.label}
                 </Link>
               </li>
-            </ul>
-          </nav>
-
-          <a
-            className="btn btn--ghost btn--block md:w-auto"
-            href={wa(WA_MESSAGES.order)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Encomendar
-          </a>
-        </div>
-
-        <p className="mt-8 text-[0.85rem] text-[#8fadc6]">
-          {year} {BRAND.name}. Peixe da lota de {BRAND.origin}.{" "}
-          {BRAND.phoneLabel}. {BRAND.email}
-        </p>
+            ))}
+            <li>
+              <a
+                href={BRAND.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4"
+              >
+                Instagram
+              </a>
+            </li>
+            <li>
+              <Link href="/privacidade" className="underline underline-offset-4">
+                Privacidade
+              </Link>
+            </li>
+          </ul>
+        </nav>
       </div>
     </footer>
   );
