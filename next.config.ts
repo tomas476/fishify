@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
      sem container com runtime, e o deploy passa a ser copiar uma pasta. */
   output: "export",
 
+  /* Cada rota sai como `<rota>/index.html` em vez de `<rota>.html`. Num
+     alojamento estático é o que faz `/entregas` E `/entregas/` funcionarem
+     os dois: sem isto, a versão com barra dava 404 no GitHub Pages, e a
+     barra é o que qualquer pessoa escreve ou o que fica colado quando se
+     copia um endereço. */
+  trailingSlash: true,
+
   /* O optimizador de imagens do Next precisa de servidor. Com `export` não
      há servidor nenhum, e as imagens deste site já vão para o disco no
      tamanho exacto em que são mostradas. */
