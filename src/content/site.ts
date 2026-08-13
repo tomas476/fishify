@@ -119,6 +119,35 @@ export const REELS = [
   { id: "DX4vpNqsx59", likes: 2518 },
 ] as const;
 
+/* As perguntas que mais fazem por mensagem. O dia de cada zona não está
+   no material do cliente, por isso a resposta remete para o WhatsApp. */
+export const FAQS = [
+  {
+    id: "zona",
+    question: "A minha zona não está na lista.",
+    answer:
+      "Mande mensagem na mesma. Há semanas em que a carrinha estica o percurso, e há sítios onde combinamos um ponto de recolha.",
+  },
+  {
+    id: "peixe",
+    question: "Como vem o peixe?",
+    answer:
+      "Em caixa térmica com gelo, já escamado e amanhado, ou em posta e em filete se pedir assim. Chega pronto a ir para a panela.",
+  },
+  {
+    id: "pagamento",
+    question: "Como se paga?",
+    answer:
+      "Na entrega. O valor é confirmado por mensagem antes de a carrinha sair, já com o peso certo de cada peixe.",
+  },
+  {
+    id: "dia",
+    question: "Em que dia entregam na minha zona?",
+    answer:
+      "Combina-se por WhatsApp. Diga onde mora e respondemos com o dia em que a carrinha passa na sua zona e a hora a que fecha a encomenda dessa semana.",
+  },
+] as const;
+
 export const NAV = [
   { href: "/", label: "Início" },
   { href: "/sobre", label: "Quem somos" },

@@ -5,6 +5,7 @@ import { BRAND } from "@/content/site";
 import Reveal from "@/components/reveal";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
+import SeaBackground from "@/components/sea-background";
 
 /* Outfit não foi escolhida a gosto: é a geometria mais próxima do lettering
    do próprio logótipo, o mesmo critério com que se amostrou o azul. */
@@ -42,18 +43,24 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#e7f2fb",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-PT" className={`${outfit.variable} ${instrument.variable}`}>
+    <html
+      lang="pt-PT"
+      data-scroll-behavior="smooth"
+      className={`${outfit.variable} ${instrument.variable}`}
+    >
       <body>
         <a href="#conteudo" className="sr-only focus:not-sr-only">
           Saltar para o conteúdo
         </a>
+        {/* montado uma só vez, aqui: nenhuma página o remonta */}
+        <SeaBackground />
         <SiteHeader />
         <main id="conteudo">{children}</main>
         <SiteFooter />

@@ -1,8 +1,10 @@
 import Link from "next/link";
+import FishExplode from "@/components/fish-explode";
 import HeroVideo from "@/components/hero-video";
-import Reels from "@/components/reels";
+import Passos from "@/components/passos";
+import ReelsFan from "@/components/reels-fan";
 import Zones from "@/components/zones";
-import { BRAND, PILLARS, STEPS, WA_MESSAGES, wa } from "@/content/site";
+import { BRAND, PILLARS, STORY, WA_MESSAGES, wa } from "@/content/site";
 
 export default function Home() {
   return (
@@ -37,15 +39,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- O QUE NOS SEPARA ---------- */}
+      {/* ---------- QUEM SOMOS ----------
+          Logo a seguir ao hero, e é a secção mais importante da página: a
+          dourada a abrir-se à esquerda, o texto deles à direita. */}
       <section className="section">
         <div className="shell">
-          <h2 className="display display--lg reveal max-w-[20ch]">
+          <div className="sobre">
+            <FishExplode className="sobre__peixe" />
+
+            <div>
+              <p className="kicker" data-reveal>
+                {STORY.kicker}
+              </p>
+              <h2 className="display display--lg mt-4" data-reveal="palavras">
+                {STORY.title}
+              </h2>
+              <div className="prose mt-7" data-reveal="cascata">
+                {STORY.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+              <p className="display display--md mt-8" data-reveal>
+                {STORY.closing}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- O QUE NOS SEPARA ---------- */}
+      <section className="section band">
+        <div className="shell">
+          <h2 className="display display--lg max-w-[20ch]" data-reveal="palavras">
             Peixe que ainda estava no mar ontem.
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <div className="mt-12 grid gap-8 md:grid-cols-3" data-reveal="cascata">
             {PILLARS.map((pillar) => (
-              <div key={pillar.title} className="reveal">
+              <div key={pillar.title}>
                 <h3 className="display display--md">{pillar.title}</h3>
                 <p className="mt-3 text-[var(--color-ink-2)]">{pillar.body}</p>
               </div>
@@ -54,55 +84,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- QUEM SOMOS, EM CURTO ---------- */}
-      <section className="section band">
-        <div className="shell shell--narrow text-center">
-          <p className="kicker reveal">Quem somos</p>
-          <p className="display display--lg reveal mt-5">
-            Duas famílias ligadas ao peixe, há gerações.
-          </p>
-          <p className="lede reveal mt-6">
-            O Rui vem de pescadores e peixeiros desde os bisavós. A Beatriz
-            aprendeu com a avó e a bisavó, na Praia da Vieira. Conheceram-se em
-            2016, na faculdade em Leiria, e a Fishify começou ali, como trabalho
-            final de curso.
-          </p>
-          <Link className="btn reveal mt-8" href="/sobre">
-            Ler a nossa história
-          </Link>
-        </div>
-      </section>
-
       {/* ---------- COMO FUNCIONA ---------- */}
       <section className="section">
         <div className="shell">
-          <p className="kicker reveal">Como funciona</p>
-          <h2 className="display display--lg reveal mt-4 max-w-[18ch]">
+          <p className="kicker" data-reveal>
+            Como funciona
+          </p>
+          <h2
+            className="display display--lg mt-4 max-w-[18ch]"
+            data-reveal="palavras"
+          >
             Três passos, e o peixe está à porta.
           </h2>
-          <ol className="mt-12 grid gap-4 md:grid-cols-3">
-            {STEPS.map((step, i) => (
-              <li key={step.title} className="panel reveal">
-                <p className="kicker">Passo {i + 1}</p>
-                <h3 className="display display--md mt-3">{step.title}</h3>
-                <p className="mt-3 text-[var(--color-ink-2)]">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <Passos className="mt-14" />
         </div>
       </section>
 
       {/* ---------- ZONAS ---------- */}
       <section className="section band">
         <div className="shell">
-          <p className="kicker reveal">Entregas</p>
-          <h2 className="display display--lg reveal mt-4 max-w-[20ch]">
+          <p className="kicker" data-reveal>
+            Entregas
+          </p>
+          <h2
+            className="display display--lg mt-4 max-w-[20ch]"
+            data-reveal="palavras"
+          >
             Onde a nossa carrinha chega.
           </h2>
-          <p className="lede reveal mt-5 max-w-[52ch]">
-            Entregamos todas as semanas em cinco zonas. Diga-nos a sua e
-            respondemos com o dia e a hora a que fecha a encomenda.
-          </p>
           <div className="mt-10">
             <Zones />
           </div>
@@ -112,15 +121,21 @@ export default function Home() {
       {/* ---------- REELS ---------- */}
       <section className="section">
         <div className="shell">
-          <p className="kicker reveal">No Instagram</p>
-          <h2 className="display display--lg reveal mt-4 max-w-[22ch]">
+          <p className="kicker" data-reveal>
+            No Instagram
+          </p>
+          <h2
+            className="display display--lg mt-4 max-w-[22ch]"
+            data-reveal="palavras"
+          >
             {BRAND.followers} pessoas veem o nosso peixe todas as semanas.
           </h2>
           <div className="mt-10">
-            <Reels />
+            <ReelsFan />
           </div>
           <a
-            className="btn reveal mt-8"
+            className="btn mt-8"
+            data-reveal
             href={BRAND.instagram}
             target="_blank"
             rel="noopener noreferrer"
@@ -133,15 +148,16 @@ export default function Home() {
       {/* ---------- CTA FINAL ---------- */}
       <section className="section band--deep">
         <div className="shell shell--narrow text-center">
-          <h2 className="display display--lg reveal">
+          <h2 className="display display--lg" data-reveal="palavras">
             Diga-nos onde está. Tratamos do resto.
           </h2>
-          <p className="lede reveal mt-5">
+          <p className="lede mt-5" data-reveal>
             Manda mensagem com a sua zona e dizemos-lhe o que veio da lota esta
             semana, a que preço e em que dia lhe podemos levar.
           </p>
           <a
-            className="btn btn--ghost reveal mt-8"
+            className="btn btn--ghost mt-8"
+            data-reveal
             href={wa(WA_MESSAGES.order)}
             target="_blank"
             rel="noopener noreferrer"

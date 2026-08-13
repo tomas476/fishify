@@ -1,0 +1,181 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+/* =========================================================================
+   AS BOLHAS
+
+   Ar solto lá no fundo que sobe até à superfície, em tamanhos diferentes.
+   Vive num <canvas> fixo em z-index negativo, montado UMA só vez a partir
+   do layout. Nenhuma página o remonta.
+
+   Porquê canvas e não uns <div> com `@keyframes`: são 26 bolhas com
+   oscilação lateral própria e opacidade a variar com o tamanho. Em DOM
+   isso são 26 elementos compostos e animados ao mesmo tempo; em canvas é
+   um só elemento e um `arc()` por bolha, que o telemóvel desenha sem dar
+   por isso.
+
+   O canvas é dimensionado à JANELA e não ao documento: como é `fixed`,
+   as bolhas atravessam o ecrã independentemente de onde a página está.
+   ========================================================================= */
+
+/** Menos bolhas em ecrãs estreitos: a mesma densidade a 390 px lia como sujidade. */
+function bubbleCount(width: number) {
+  return width < 700 ? 16 : 26;
+}
+
+type Bubble = {
+  x: number;
+  y: number;
+  r: number;
+  speed: number;
+  drift: number;
+  phase: number;
+  alpha: number;
+};
+
+function makeBubble(w: number, h: number, seed: number, atBottom: boolean): Bubble {
+  /* Sem Math.random na inicialização do primeiro ecrã não valeria a pena:
+     isto é decoração, e uma distribuição pseudo-aleatória simples chega. */
+  const r = 2 + Math.random() * 9;
+  return {
+    x: Math.random() * w,
+    /* Ao arrancar, espalha-as pela altura toda. Depois, cada bolha que
+       chega ao topo volta a nascer em baixo: nascerem todas em baixo à
+       entrada dava uma vaga única e depois nada. */
+    y: atBottom ? h + r + Math.random() * 120 : Math.random() * h,
+    r,
+    /* As grandes sobem mais depressa, como na água. */
+    speed: 0.18 + r * 0.045,
+    drift: 6 + Math.random() * 16,
+    phase: seed * 1.7,
+    /* As pequenas são mais discretas: a opacidade acompanha o raio. */
+    alpha: 0.1 + Math.min(r, 9) * 0.028,
+  };
+}
+
+export default function SeaBackground() {
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let bubbles: Bubble[] = [];
+    let raf = 0;
+    let running = false;
+    let w = 0;
+    let h = 0;
+    let last = 0;
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      /* setTransform e não scale: a escala do contexto 2D é cumulativa, e
+         ao fim de três resizes o desenho estava oito vezes maior. */
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const n = bubbleCount(w);
+      if (bubbles.length !== n) {
+        bubbles = Array.from({ length: n }, (_, i) => makeBubble(w, h, i, false));
+      }
+    };
+
+    const draw = (t: number) => {
+      const dt = last ? Math.min((t - last) / 16.7, 3) : 1;
+      last = t;
+      ctx.clearRect(0, 0, w, h);
+
+      for (const b of bubbles) {
+        b.y -= b.speed * dt;
+        if (b.y + b.r < 0) {
+          Object.assign(b, makeBubble(w, h, b.phase, true));
+          continue;
+        }
+        const x = b.x + Math.sin(t / 1400 + b.phase) * b.drift;
+
+        ctx.beginPath();
+        ctx.arc(x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${b.alpha})`;
+        ctx.fill();
+
+        /* Aresta e reflexo: sem eles a bolha lê como um ponto branco, e
+           não como ar dentro de água. */
+        ctx.strokeStyle = `rgba(255, 255, 255, ${b.alpha * 2.1})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        if (b.r > 4) {
+          ctx.beginPath();
+          ctx.arc(x - b.r * 0.32, b.y - b.r * 0.34, b.r * 0.2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${b.alpha * 3})`;
+          ctx.fill();
+        }
+      }
+
+      raf = requestAnimationFrame(draw);
+    };
+
+    const stop = () => {
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    };
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      last = 0;
+      raf = requestAnimationFrame(draw);
+    };
+
+    const sync = () => {
+      /* Parada com a página escondida, com movimento reduzido, ou com
+         poupança de dados. Com movimento reduzido fica um ecrã de bolhas
+         quietas, que ainda dá textura sem nada a mexer. */
+      if (
+        document.hidden ||
+        reduced.matches ||
+        window.matchMedia("(prefers-reduced-data: reduce)").matches
+      ) {
+        stop();
+        if (!document.hidden) {
+          ctx.clearRect(0, 0, w, h);
+          for (const b of bubbles) {
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${b.alpha})`;
+            ctx.fill();
+          }
+        }
+        return;
+      }
+      start();
+    };
+
+    resize();
+    sync();
+
+    window.addEventListener("resize", resize, { passive: true });
+    document.addEventListener("visibilitychange", sync);
+    reduced.addEventListener("change", sync);
+
+    return () => {
+      stop();
+      window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", sync);
+      reduced.removeEventListener("change", sync);
+    };
+  }, []);
+
+  return <canvas ref={ref} className="sea-bubbles" aria-hidden="true" />;
+}

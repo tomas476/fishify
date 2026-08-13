@@ -6,36 +6,41 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 /* =========================================================================
    A DOURADA QUE SE ABRE AO SCROLL
 
-   61 frames tirados do vídeo original (5,04 s a 24 fps, ficaram os pares).
-   Descer separa o peixe em postas, subir volta a juntá-lo: o índice do frame
-   é uma função pura da posição do scroll, por isso a animação é reversível
-   sem guardar estado nenhum.
+   61 frames tirados do vídeo original do cliente (5,04 s a 24 fps, ficaram
+   os pares). O índice do frame é uma função pura da posição da secção no
+   ecrã, por isso descer separa o peixe e subir volta a juntá-lo, sem
+   guardar estado nenhum.
 
-   Porquê canvas e não 61 <img> empilhados: com <img> o browser só decodifica
-   a imagem quando ela fica visível, e a primeira passagem por cada frame
-   engasgava. Aqui as imagens são descodificadas para memória antes de
-   entrarem em jogo, e o desenho é um `drawImage` por frame.
+   NÃO PRENDE O SCROLL. A primeira versão tinha um palco `sticky` de 320vh
+   e a página agarrava quem descia; foi mandada abaixo por isso. Agora o
+   progresso mede-se pela travessia normal da secção: quando o centro dela
+   entra por baixo do ecrã o peixe está inteiro, quando sai por cima está
+   todo aberto, e a página nunca deixa de responder ao dedo.
+
+   Porquê canvas e não 61 <img> empilhados: com <img> o browser só
+   descodifica a imagem quando ela fica visível, e a primeira passagem por
+   cada frame engasgava.
 
    Porquê não um <video> com `currentTime`: o seek de um vídeo comprimido
-   salta para o keyframe anterior. Ou se re-encoda tudo em keyframes (e o
-   ficheiro fica maior do que estes 2,3 MB) ou se aceita a animação aos
-   solavancos. Frames resolvem isto sem nenhuma das duas penalizações.
+   salta para o keyframe anterior. Re-encodar tudo em keyframes daria um
+   ficheiro maior do que estes ~3 MB.
+
+   Os frames têm CANAL ALFA. Foram refeitos quando o fundo do site passou a
+   azul: achatados sobre branco, como estavam, ficavam com um rectângulo
+   branco à volta.
    ========================================================================= */
 
 const FRAMES = 61;
-const W = 440;
-const H = 1105;
+const W = 390;
+const H = 980;
 
 /** `/frames/fish-001.webp` … `/frames/fish-061.webp` */
 function src(i: number) {
   return `/frames/fish-${String(i + 1).padStart(3, "0")}.webp`;
 }
 
-/** Legendas ancoradas ao progresso: dão sentido à animação. */
+/** Legendas ancoradas ao progresso: dão sentido ao movimento. */
 const CAPTIONS = [
-  /* Os limiares seguem o que se VÊ, não uma divisão em três partes iguais:
-     aos 0,60 do curso o peixe ainda está a meio da separação, e a legenda
-     das postas a essa altura contradizia a imagem. */
   { until: 0.22, text: "Inteiro, como saiu da lota de Peniche." },
   { until: 0.72, text: "Escamado e amanhado por quem faz isto há gerações." },
   { until: 1.01, text: "Em posta ou em filete, como o quiser à mesa." },
@@ -45,13 +50,15 @@ function captionFor(p: number) {
   return (CAPTIONS.find((c) => p < c.until) ?? CAPTIONS[CAPTIONS.length - 1]).text;
 }
 
-export default function FishExplode() {
+type Props = {
+  /** O elemento cuja travessia do ecrã conduz a animação. Por omissão, a própria secção. */
+  className?: string;
+};
+
+export default function FishExplode({ className }: Props) {
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [caption, setCaption] = useState<string>(CAPTIONS[0].text);
-  /* Com movimento reduzido o palco encolhe para uma secção normal e mostra
-     só o peixe já aberto: 320vh de scroll preso é exactamente o tipo de
-     coisa que esta preferência existe para evitar. */
   const still = useReducedMotion();
 
   useEffect(() => {
@@ -59,14 +66,13 @@ export default function FishExplode() {
     const cv = canvas.current;
     if (!el || !cv) return;
 
-    const ctx = cv.getContext("2d", { alpha: false });
+    /* alpha: true, ao contrário da versão de fundo branco. O peixe é
+       recortado e o azul da página tem de passar por trás dele. */
+    const ctx = cv.getContext("2d");
     if (!ctx) return;
 
-    /* O canvas tem sempre o tamanho do master. Escalá-lo por CSS custa
-       nada e evita redesenhar tudo a cada resize da janela. */
     cv.width = W;
     cv.height = H;
-    ctx.fillStyle = "#ffffff";
 
     const images = new Array<HTMLImageElement | null>(FRAMES).fill(null);
     let drawn = -1;
@@ -74,7 +80,7 @@ export default function FishExplode() {
     let alive = true;
 
     const paint = (index: number) => {
-      /* Se o frame pedido ainda não chegou, fica o mais próximo que já
+      /* Se o frame pedido ainda não chegou, desenha o mais próximo que já
          existe: mais vale a animação andar a passos largos enquanto
          carrega do que ficar parada no primeiro frame. */
       let best = -1;
@@ -91,18 +97,38 @@ export default function FishExplode() {
       if (best < 0 || best === drawn) return;
       const img = images[best];
       if (!img) return;
-      ctx.fillRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H);
       ctx.drawImage(img, 0, 0, W, H);
       drawn = best;
     };
 
+    /* Quem manda no progresso muda com o desenho:
+
+       • Em duas colunas o peixe fica pegajoso e acompanha o texto todo, por
+         isso é a SECÇÃO que conta: a separação dura tanto quanto a leitura.
+       • Numa coluna o peixe atravessa o ecrã e desaparece muito antes do
+         fim do texto. Se medisse a secção, o peixe saía de vista com dois
+         cortes feitos e o resto acontecia onde ninguém o via, por isso
+         conta a travessia DELE.
+
+       Decidido a cada leitura e não uma vez só: rodar o telemóvel troca de
+       desenho sem remontar o componente. */
+    const alvo = () =>
+      window.matchMedia("(min-width: 900px)").matches
+        ? (el.closest(".sobre") as HTMLElement | null) ?? el
+        : el;
+
     const progress = () => {
-      const rect = el.getBoundingClientRect();
-      /* O palco é sticky e ocupa a altura da janela: o curso útil é a
-         altura do invólucro menos uma janela. */
-      const travel = rect.height - window.innerHeight;
-      if (travel <= 0) return 0;
-      return Math.min(1, Math.max(0, -rect.top / travel));
+      const rect = alvo().getBoundingClientRect();
+      const vh = window.innerHeight;
+      const curso = rect.height + vh;
+      if (curso <= 0) return 0;
+      const andado = vh - rect.top;
+      /* A janela útil é encolhida nas pontas: o peixe fica inteiro enquanto
+         entra e já está aberto antes de sair, em vez de chegar ao fim
+         exactamente no instante em que desaparece. */
+      const bruto = (andado / curso - 0.14) / 0.64;
+      return Math.min(1, Math.max(0, bruto));
     };
 
     const update = () => {
@@ -132,10 +158,9 @@ export default function FishExplode() {
       };
     }
 
-    /* Carregamento: primeiro e último à cabeça (são os dois estados que
-       importam se o utilizador passar depressa), depois os do meio por
-       ordem. Nada de `Promise.all`: cada frame que chega já pode ser
-       desenhado. */
+    /* Primeiro e último à cabeça, que são os dois estados que importam se
+       alguém passar depressa; os do meio a seguir, por ordem. Nada de
+       Promise.all: cada frame que chega já pode ser desenhado. */
     const order = [0, FRAMES - 1, ...Array.from({ length: FRAMES }, (_, i) => i)];
     let cursor = 0;
 
@@ -157,8 +182,6 @@ export default function FishExplode() {
       img.onerror = loadNext;
     };
 
-    /* Três em paralelo: enche depressa sem competir com o vídeo do hero
-       por ligações. */
     loadNext();
     loadNext();
     loadNext();
@@ -175,19 +198,14 @@ export default function FishExplode() {
   }, [still]);
 
   return (
-    /* 320vh de curso: dá ~5 px de scroll por frame no telemóvel, que é o
-       ponto em que a separação se lê como movimento contínuo e não como
-       diapositivos. */
-    <div ref={wrap} className="fish" style={{ height: still ? "auto" : "320vh" }}>
-      <div className="fish__stage">
-        <canvas
-          ref={canvas}
-          className="fish__frame"
-          role="img"
-          aria-label="Uma dourada inteira que se separa em postas à medida que a página desce"
-        />
-        <p className="fish__caption">{caption}</p>
-      </div>
+    <div ref={wrap} className={className}>
+      <canvas
+        ref={canvas}
+        className="fish__frame"
+        role="img"
+        aria-label="Uma dourada inteira que se separa em postas à medida que a página desce"
+      />
+      <p className="fish__caption">{caption}</p>
     </div>
   );
 }

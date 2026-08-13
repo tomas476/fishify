@@ -18,18 +18,19 @@
 
 :root {
   /* ---------- superfícies ----------
-     O branco é PURO de propósito, e não off-white: os 61 frames do peixe
-     foram achatados sobre #ffffff para pesarem 2,3 MB em vez de 9,4 MB com
-     canal alfa. Mudar o papel faz aparecer um rectângulo à volta do peixe. */
-  --paper: #ffffff;
-  --paper-2: #eff5fa; /* faixa de água rasa: secções alternadas */
-  --paper-3: #dce9f4; /* cards dentro das faixas, hovers */
-  --deep: #0e2237; /* azul de fundo do mar: rodapé e chapas de ênfase */
+     A página é ÁGUA: azul muito claro com brilhos, e bolhas a subir por
+     trás de tudo (ver `sea-background.tsx`). Os 61 frames do peixe foram
+     REFEITOS com canal alfa por causa disto; achatados sobre branco, como
+     estavam, ficavam com um rectângulo branco à volta em cima do azul. */
+  --paper: #e7f2fb; /* água rasa: o fundo de toda a página */
+  --paper-2: #d8e9f7; /* faixa mais funda: secções alternadas */
+  --paper-3: #c7dff2; /* superfícies dentro das faixas, hovers */
+  --deep: #0b2035; /* fundo do mar: rodapé e chapas de ênfase */
 
   /* ---------- tinta ---------- */
   --ink: #0e1a24; /* quase-preto azulado, nunca #000 */
   --ink-2: #3f5361; /* texto secundário e ledes */
-  --ink-3: #5a6d7b; /* legendas e metadados */
+  --ink-3: #506674; /* legendas e metadados; escurecido para o azul */
 
   /* ---------- acento único ----------
      Amostrado do logótipo (#4C7FB4), não escolhido. Sobre branco dá 3,54:1,
@@ -41,7 +42,7 @@
   --on-accent: #ffffff;
 
   /* ---------- linhas ---------- */
-  --hair: rgba(14, 26, 36, 0.1);
+  --hair: rgba(14, 26, 36, 0.12);
   --hair-strong: rgba(14, 26, 36, 0.2);
   --hair-light: rgba(255, 255, 255, 0.24); /* sobre vídeo e sobre --deep */
 
@@ -88,6 +89,29 @@
   --font-sans: var(--font-sans);
 
   --radius-lg: var(--radius);
+
+  /* Abrir e fechar do acordeão do FAQ. O Radix mede o conteúdo e põe a
+     altura em `--radix-accordion-content-height`. */
+  --animate-accordion-down: accordion-down 0.24s var(--ease);
+  --animate-accordion-up: accordion-up 0.24s var(--ease);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
 }
 
 /* As regras abaixo vivem nas CAMADAS do Tailwind, e não soltas.
@@ -110,6 +134,20 @@
 
   html {
     background: var(--paper);
+    /* o brilho de água vive no <html> para acompanhar a página toda sem
+       um segundo elemento a esticar-se ao tamanho do documento */
+    background-image:
+      radial-gradient(
+        1200px 800px at 12% -8%,
+        rgba(255, 255, 255, 0.9),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 700px at 92% 6%,
+        rgba(140, 195, 235, 0.34),
+        transparent 62%
+      );
+    background-attachment: fixed;
     color-scheme: light;
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
@@ -123,7 +161,9 @@
   }
 
   body {
-    background: var(--paper);
+    /* transparente de propósito: as bolhas vivem em z-index negativo e o
+       body a pintar apagava-as */
+    background: transparent;
     color: var(--ink);
     font-family: var(--font-sans);
     font-size: 16px;
@@ -363,6 +403,124 @@
   }
 
   /* =========================================================================
+     O MAR POR TRÁS DE TUDO
+     ========================================================================= */
+
+  .sea-bubbles {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* =========================================================================
+     TÍTULOS QUE SE ESCREVEM
+
+     Os dialectos vêm do site da Imogrow, onde já estão provados. São
+     VALORES do mesmo atributo `data-reveal`, para o observador global os
+     apanhar todos de graça.
+
+     O estado escondido só existe debaixo de `.js-reveal`, que é o próprio
+     script que põe no <html>. Sem essa condição, uma falha no JS deixava a
+     página em branco com o conteúdo todo presente no DOM.
+     ========================================================================= */
+
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.8s var(--ease),
+      transform 0.9s var(--ease);
+  }
+
+  .js-reveal [data-reveal].dentro {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  /* destaque: reservado aos títulos de secção */
+  .js-reveal [data-reveal="destaque"] {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+    filter: blur(12px);
+    transition:
+      opacity 1.05s var(--ease),
+      transform 1.2s var(--ease),
+      filter 1.05s var(--ease);
+  }
+
+  /* palavras: cada palavra sobe e acende, escalonada. As .pl são
+     inline-block e continuam a envolver-se naturalmente, por isso isto não
+     mexe com as quebras de linha do título. */
+  .js-reveal [data-reveal="palavras"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .js-reveal [data-reveal="palavras"] .pl {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.66s var(--ease);
+  }
+
+  .js-reveal [data-reveal="palavras"].dentro .pl {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--pl-i, 0) * 45ms);
+  }
+
+  /* cascata: o pai revela-se e os filhos escalonam-se sozinhos */
+  .js-reveal [data-reveal="cascata"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .js-reveal [data-reveal="cascata"] > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.55s var(--ease),
+      transform 0.7s var(--ease);
+  }
+
+  .js-reveal [data-reveal="cascata"].dentro > * {
+    opacity: 1;
+    transform: none;
+  }
+
+  .js-reveal [data-reveal="cascata"].dentro > :nth-child(2) {
+    transition-delay: 0.09s;
+  }
+
+  .js-reveal [data-reveal="cascata"].dentro > :nth-child(3) {
+    transition-delay: 0.18s;
+  }
+
+  .js-reveal [data-reveal="cascata"].dentro > :nth-child(n + 4) {
+    transition-delay: 0.24s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js-reveal [data-reveal],
+    .js-reveal [data-reveal="destaque"],
+    .js-reveal [data-reveal="palavras"] .pl,
+    .js-reveal [data-reveal="cascata"] > * {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+  }
+
+  /* =========================================================================
      REVELAR AO SCROLL
      Nasce a 0 e é o IntersectionObserver que o traz. Sem rootMargin negativo:
      já partiu o fim de uma página noutro projecto.
@@ -437,47 +595,65 @@
   }
 
   /* =========================================================================
-     PALCO DO PEIXE: sequência de frames conduzida pelo scroll
+     SOBRE NÓS: a dourada à esquerda, o texto deles à direita
+
+     O palco JÁ NÃO É `sticky` e NÃO prende o scroll. A separação acontece
+     enquanto a secção atravessa o ecrã, e quem desce nunca sente a página
+     a agarrá-lo. Foi um pedido explícito depois da primeira versão.
      ========================================================================= */
 
-  .fish {
-    position: relative;
+  .sobre {
+    display: grid;
+    gap: clamp(24px, 6vw, 56px);
+    align-items: center;
   }
 
-  .fish__stage {
-    position: sticky;
-    top: 0;
+  @media (min-width: 900px) {
+    .sobre {
+      /* o peixe é estreito e alto: a coluna dele não precisa de metade */
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+      gap: clamp(40px, 6vw, 88px);
+    }
+  }
+
+  .sobre__peixe {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 100svh;
-    padding-block: 72px 32px;
+    gap: 14px;
+  }
+
+  /* `sticky` SÓ com duas colunas. Numa coluna só, um item de grelha
+     pegajoso não fica preso à sua linha: o browser prende-o ao contentor
+     inteiro, e o peixe descia por cima do texto todo. */
+  @media (min-width: 900px) {
+    .sobre__peixe {
+      position: sticky;
+      top: 104px;
+      align-self: start;
+    }
   }
 
   .fish__frame {
-    width: min(62vw, 240px);
+    width: min(46vw, 190px);
     height: auto;
-    aspect-ratio: 440 / 1105;
+    aspect-ratio: 390 / 980;
     object-fit: contain;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     .fish__frame {
-      width: min(30vw, 330px);
+      width: min(26vw, 300px);
     }
   }
 
   .fish__caption {
-    position: absolute;
-    left: 50%;
-    bottom: clamp(18px, 4vh, 40px);
-    transform: translateX(-50%);
-    width: min(100%, 420px);
-    padding-inline: var(--pad);
+    max-width: 26ch;
     text-align: center;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
     color: var(--ink-3);
-    transition: opacity 0.4s var(--ease);
+    transition: opacity 0.35s var(--ease);
   }
 
   /* =========================================================================

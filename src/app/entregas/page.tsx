@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Faq from "@/components/faq";
+import Passos from "@/components/passos";
 import Zones from "@/components/zones";
-import { STEPS, WA_MESSAGES, wa } from "@/content/site";
+import { WA_MESSAGES, wa } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Entregas",
@@ -13,11 +15,12 @@ export default function Entregas() {
     <>
       <section className="section" style={{ paddingTop: "clamp(120px, 22vh, 180px)" }}>
         <div className="shell">
-          <p className="kicker reveal">Entregas</p>
-          <h1 className="display display--lg reveal mt-4 max-w-[20ch]">
+          <p className="kicker" data-reveal>Entregas</p>
+          <h1 className="display display--lg mt-4 max-w-[20ch]"
+            data-reveal="palavras">
             Levamos o peixe a cinco zonas do país.
           </h1>
-          <p className="lede reveal mt-6 max-w-[54ch]">
+          <p className="lede mt-6 max-w-[54ch]" data-reveal>
             A carrinha sai de Peniche com o peixe escolhido nessa manhã e faz uma
             zona de cada vez. Escolha a sua abaixo e abrimos a conversa já com o
             nome da zona escrito.
@@ -30,52 +33,22 @@ export default function Entregas() {
 
       <section className="section band">
         <div className="shell">
-          <p className="kicker reveal">Como funciona</p>
-          <h2 className="display display--lg reveal mt-4 max-w-[18ch]">
+          <p className="kicker" data-reveal>Como funciona</p>
+          <h2 className="display display--lg mt-4 max-w-[18ch]"
+            data-reveal="palavras">
             Da mensagem à mesa.
           </h2>
-          <ol className="mt-12 grid gap-4 md:grid-cols-3">
-            {STEPS.map((step, i) => (
-              <li key={step.title} className="panel reveal">
-                <p className="kicker">Passo {i + 1}</p>
-                <h3 className="display display--md mt-3">{step.title}</h3>
-                <p className="mt-3 text-[var(--color-ink-2)]">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <Passos className="mt-14" />
         </div>
       </section>
 
-      <section className="section">
-        <div className="shell shell--narrow">
-          <h2 className="display display--lg reveal">Perguntas que nos fazem</h2>
-          <dl className="mt-10 grid gap-6">
-            <div className="reveal">
-              <dt className="display display--md">
-                A minha zona não está na lista.
-              </dt>
-              <dd className="mt-2 text-[var(--color-ink-2)]">
-                Mande mensagem na mesma. Há semanas em que a carrinha estica o
-                percurso, e há sítios onde combinamos um ponto de recolha.
-              </dd>
-            </div>
-            <div className="reveal">
-              <dt className="display display--md">Como vem o peixe?</dt>
-              <dd className="mt-2 text-[var(--color-ink-2)]">
-                Em caixa térmica com gelo, já escamado e amanhado, ou em posta e
-                em filete se pedir assim. Chega pronto a ir para a panela.
-              </dd>
-            </div>
-            <div className="reveal">
-              <dt className="display display--md">Como se paga?</dt>
-              <dd className="mt-2 text-[var(--color-ink-2)]">
-                Na entrega. O valor é confirmado por mensagem antes de a carrinha
-                sair, já com o peso certo de cada peixe.
-              </dd>
-            </div>
-          </dl>
+      <Faq />
+
+      <section className="section--tight">
+        <div className="shell shell--narrow text-center">
           <a
-            className="btn btn--solid reveal mt-10"
+            className="btn btn--solid"
+            data-reveal
             href={wa(WA_MESSAGES.schedule)}
             target="_blank"
             rel="noopener noreferrer"

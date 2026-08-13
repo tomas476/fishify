@@ -1,75 +1,34 @@
 import Link from "next/link";
-import { BRAND, HOURS, NAV, WA_MESSAGES, wa } from "@/content/site";
+import { BRAND, NAV, WA_MESSAGES, wa } from "@/content/site";
 import Logo from "@/components/logo";
 
-/* O rodapé é a única chapa escura do site: fecha a página com o azul do
-   fundo do mar e faz o contraponto ao branco de gelo de tudo o resto. */
+/* =========================================================================
+   RODAPÉ COMPACTO
+
+   A primeira versão tinha os sete dias da semana em lista, três colunas de
+   links e um logótipo grande: ocupava mais de um ecrã inteiro só para dizer
+   o que já estava na página dos contactos. Agora é uma faixa: logótipo,
+   uma linha de horário, os links em fila e o WhatsApp. O detalhe do horário
+   dia a dia vive em /contactos, que é onde alguém o vai procurar.
+   ========================================================================= */
+
+/** Os sete dias resumidos numa linha. Segunda é o dia de folga. */
+const HORARIO_CURTO = "Terça a domingo, das 08:00 às 14:00";
+
 export default function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="band--deep">
-      <div className="shell section--tight">
-        <div className="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
-          <div>
-            <Logo className="h-6 w-auto text-white" />
-            <p className="lede mt-5 max-w-sm">{BRAND.tagline}</p>
-            <a
-              className="btn btn--ghost mt-6"
-              href={wa(WA_MESSAGES.order)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Encomendar pelo WhatsApp
-            </a>
+      <div className="shell py-10">
+        <div className="flex flex-col gap-7 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-3">
+            <Logo className="h-5 w-auto text-white" />
+            <p className="text-[0.92rem] text-[#b9cfe1]">{HORARIO_CURTO}</p>
           </div>
 
-          <div>
-            <h2 className="kicker">Contactos</h2>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <a
-                  href={wa(WA_MESSAGES.general)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4"
-                >
-                  {BRAND.phoneLabel}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${BRAND.email}`}
-                  className="underline underline-offset-4"
-                >
-                  {BRAND.email}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={BRAND.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-4"
-                >
-                  {BRAND.instagramHandle}
-                </a>
-              </li>
-            </ul>
-
-            <h2 className="kicker mt-8">Horário</h2>
-            <ul className="muted mt-4 space-y-1 text-[0.95rem]">
-              {HOURS.map((h) => (
-                <li key={h.day}>
-                  {h.day}: {h.hours ?? "encerrado"}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="kicker">Site</h2>
-            <ul className="mt-4 space-y-2">
+          <nav aria-label="Rodapé">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[0.95rem]">
               {NAV.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="underline underline-offset-4">
@@ -78,16 +37,36 @@ export default function SiteFooter() {
                 </li>
               ))}
               <li>
+                <a
+                  href={BRAND.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4"
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
                 <Link href="/privacidade" className="underline underline-offset-4">
                   Privacidade
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
+
+          <a
+            className="btn btn--ghost btn--block md:w-auto"
+            href={wa(WA_MESSAGES.order)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Encomendar
+          </a>
         </div>
 
-        <p className="muted mt-12 text-[0.88rem]">
-          {year} {BRAND.name}. Peixe da lota de {BRAND.origin}.
+        <p className="mt-8 text-[0.85rem] text-[#8fadc6]">
+          {year} {BRAND.name}. Peixe da lota de {BRAND.origin}.{" "}
+          {BRAND.phoneLabel}. {BRAND.email}
         </p>
       </div>
     </footer>
