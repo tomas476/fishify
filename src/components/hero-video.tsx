@@ -39,6 +39,40 @@ export default function HeroVideo() {
     const reducedData = window.matchMedia("(prefers-reduced-data: reduce)");
     const small = window.matchMedia(SMALL);
 
+    /* Primeiro toque, primeiro scroll ou primeira tecla: tenta outra vez e
+       desarma-se. Um `play()` dentro de um gesto conta como intenção do
+       utilizador e passa por cima da poupança de energia do iOS, que é o
+       único estado em que um vídeo mudo e inline é recusado.
+
+       Declarado como `const` e não como `function`: uma função içada perde
+       o estreitamento de tipo do `video` que o guarda acima garantiu. */
+    let armado = false;
+
+    const armarGesto = () => {
+      if (armado) return;
+      armado = true;
+
+      const eventos = ["pointerdown", "touchstart", "keydown", "scroll"] as const;
+
+      const desarmar = () => {
+        armado = false;
+        for (const nome of eventos) window.removeEventListener(nome, tentar);
+      };
+
+      const tentar = () => {
+        desarmar();
+        video.muted = true;
+        void video.play().catch(() => {
+          /* recusado outra vez: fica o poster, que é um frame do próprio
+             filme e por isso não se lê como erro */
+        });
+      };
+
+      for (const nome of eventos) {
+        window.addEventListener(nome, tentar, { once: true, passive: true });
+      }
+    };
+
     const sync = () => {
       /* Antes de tudo: em iOS um vídeo que não esteja mudo NO MOMENTO do
          play é recusado, e o React não escreve o atributo `muted` no HTML
@@ -49,8 +83,19 @@ export default function HeroVideo() {
         video.pause();
         return;
       }
-      void video.play().catch(() => {
-        /* recusado em poupança de energia: fica o poster, que é aceitável */
+      void video.play().catch((erro: DOMException) => {
+        /* O iOS recusa o arranque automático em MODO DE POUPANÇA DE
+           ENERGIA, mesmo com o vídeo mudo e inline. Nesse estado, a única
+           coisa que o convence é um gesto do utilizador, e é isso que o
+           `armarGesto` abaixo apanha.
+
+           A razão vai para a consola porque o servidor de desenvolvimento
+           do Next reencaminha as mensagens do browser para o terminal: é
+           assim que se vê, de cá, porque é que um telemóvel recusou. */
+        console.warn(
+          `[fishify] o vídeo do hero não arrancou sozinho: ${erro.name}, ${erro.message}`
+        );
+        armarGesto();
       });
     };
 
@@ -68,12 +113,16 @@ export default function HeroVideo() {
     };
 
     sync();
+    /* O `canplay` cobre o caso de o efeito correr antes de haver dados:
+       aí o primeiro play() falha por razões que não são de política. */
+    video.addEventListener("canplay", sync);
     document.addEventListener("visibilitychange", sync);
     reducedMotion.addEventListener("change", onChange);
     reducedData.addEventListener("change", onChange);
     small.addEventListener("change", onChange);
 
     return () => {
+      video.removeEventListener("canplay", sync);
       document.removeEventListener("visibilitychange", sync);
       reducedMotion.removeEventListener("change", onChange);
       reducedData.removeEventListener("change", onChange);
