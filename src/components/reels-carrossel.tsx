@@ -93,6 +93,23 @@ export default function ReelsCarrossel() {
     return () => obs.disconnect();
   }, []);
 
+  /* Uma tentativa por gesto, e desarma-se a seguir. */
+  const armado = useRef(false);
+  const armarGesto = useCallback(() => {
+    if (armado.current) return;
+    armado.current = true;
+
+    const tentar = () => {
+      armado.current = false;
+      const v = videoRef.current;
+      if (!v) return;
+      void v.play().catch(() => {});
+    };
+
+    window.addEventListener("pointerdown", tentar, { once: true, passive: true });
+    window.addEventListener("scroll", tentar, { once: true, passive: true });
+  }, []);
+
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -102,9 +119,13 @@ export default function ReelsCarrossel() {
       return;
     }
     void v.play().catch(() => {
-      /* recusado sem gesto: fica a capa, que é o mesmo frame */
+      /* Recusado. Em poupança de energia o iOS não deixa arrancar nada
+         sozinho, e a única coisa que o convence é um gesto: fica armado
+         para a primeira vez que se toque no ecrã. Até lá vê-se a capa,
+         que está por baixo. */
+      armarGesto();
     });
-  }, [foco, comSom, reduzido, noEcra]);
+  }, [foco, comSom, reduzido, noEcra, armarGesto]);
 
   const emFoco = REELS[foco];
 
@@ -160,17 +181,35 @@ export default function ReelsCarrossel() {
             >
               <div className="cf__moldura">
                 {ativo ? (
-                  <video
-                    ref={videoRef}
-                    className="cf__media"
-                    src={asset(`/reels/${reel.id}.mp4`)}
-                    poster={asset(`/reels/${reel.id}.webp`)}
-                    loop
-                    playsInline
-                    preload="none"
-                    controls={false}
-                    disablePictureInPicture
-                  />
+                  <>
+                    {/* A CAPA POR BAIXO DO VÍDEO, sempre. O atributo
+                        `poster` não chega: num iPhone em poupança de
+                        energia o play é recusado, o vídeo fica sem frames
+                        E sem poster pintado, e o cartão do meio aparecia
+                        em branco enquanto os vizinhos mostravam a capa.
+                        Com a imagem por baixo, o pior caso é ver a capa. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      className="cf__media"
+                      src={asset(`/reels/${reel.id}.webp`)}
+                      alt=""
+                      width={540}
+                      height={960}
+                      decoding="async"
+                      draggable={false}
+                    />
+                    <video
+                      ref={videoRef}
+                      className="cf__media cf__media--video"
+                      src={asset(`/reels/${reel.id}.mp4`)}
+                      poster={asset(`/reels/${reel.id}.webp`)}
+                      loop
+                      playsInline
+                      preload="none"
+                      controls={false}
+                      disablePictureInPicture
+                    />
+                  </>
                 ) : (
                   /* eslint-disable-next-line @next/next/no-img-element -- capa
                      já no tamanho exacto; o next/image traria um wrapper por

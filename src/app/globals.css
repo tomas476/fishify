@@ -912,6 +912,14 @@
     pointer-events: none;
   }
 
+  /* O vídeo vai POR CIMA da capa. Enquanto não tiver frames (recusado em
+     poupança de energia, ou ainda a carregar) é transparente e vê-se a
+     capa por baixo, em vez do cartão em branco. */
+  .cf__media--video {
+    z-index: 1;
+    background: transparent;
+  }
+
   .cf__som {
     position: absolute;
     top: 12px;
@@ -1219,29 +1227,13 @@
      HORÁRIO
      ========================================================================= */
 
+  /* Sem ponto de estado. Levava um verde quando estava aberto, e o verde
+     era a única segunda cor do site inteiro: a frase já diz se está aberto
+     ou fechado, e diz melhor do que um ponto. */
   .horario__estado {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55em;
     margin-bottom: 14px;
     font-weight: 600;
     color: var(--accent-deep);
-  }
-
-  .horario__estado::before {
-    content: "";
-    width: 9px;
-    height: 9px;
-    border-radius: 999px;
-    background: var(--ink-3);
-  }
-
-  /* Verde é a única vez que uma segunda cor entra no site, e entra porque
-     "aberto agora" é informação de estado e não decoração: o azul da
-     marca não distingue aberto de fechado. */
-  .horario__estado[data-aberto="true"]::before {
-    background: #1a8f5f;
-    box-shadow: 0 0 0 4px rgba(26, 143, 95, 0.18);
   }
 
   .horario {
