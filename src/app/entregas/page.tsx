@@ -3,7 +3,7 @@ import Link from "next/link";
 import Entregas from "@/components/entregas";
 import Faq from "@/components/faq";
 import Passos from "@/components/passos";
-import { BRAND, ZONES } from "@/content/site";
+import { BRAND } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Entregas",
@@ -44,23 +44,16 @@ export default function EntregasPagina() {
         </div>
       </section>
 
-      <section className="section band">
-        <div className="shell">
-          <h2 className="display display--lg max-w-[20ch]" data-reveal="palavras">
-            Os concelhos de cada zona.
-          </h2>
-          <div className="mt-10 grid gap-8 md:grid-cols-2" data-reveal="cascata">
-            {ZONES.map((zona) => (
-              <div key={zona.name}>
-                <h3 className="display display--md">{zona.name}</h3>
-                <p className="mt-2 text-[var(--color-ink-2)]">{zona.note}</p>
-              </div>
-            ))}
-          </div>
-          <p className="muted mt-10 max-w-[54ch]" data-reveal>
-            Não vê a sua terra na lista? Mande mensagem na mesma. Há semanas em
-            que a carrinha estica o percurso, e há sítios onde combinamos um
-            ponto de recolha.
+      {/* A lista de concelhos escrita saiu: repetia o que o mapa já diz
+          quando se toca numa zona, e empurrava o resto da página para
+          baixo. A nota sobre zonas fora da lista fica, porque essa o mapa
+          não tem como dizer. */}
+      <section className="section--tight">
+        <div className="shell shell--narrow">
+          <p className="muted" data-reveal>
+            Não vê a sua terra na lista? Mande mensagem na mesma. Há semanas
+            em que a carrinha estica o percurso, e há sítios onde combinamos
+            um ponto de recolha.
           </p>
         </div>
       </section>

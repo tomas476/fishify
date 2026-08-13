@@ -82,7 +82,10 @@ export const STEPS = [
     body: "Dizemos o que veio da lota nessa semana e a que preço. Escolhe as espécies, a quantidade e como o quer preparado.",
   },
   {
-    title: "Recebe em casa",
+    /* "Nós entregamos" e não "recebe em casa": os dois primeiros passos são
+       acções de quem compra, e o terceiro é o compromisso deles. Trocar a
+       voz no fim é o que faz a sequência acabar numa promessa. */
+    title: "Nós entregamos",
     body: "Vai fresco, em caixa térmica com gelo, no dia da sua zona. Paga na entrega.",
   },
 ] as const;
