@@ -120,26 +120,30 @@ export const RETRATOS = {
 export const STORY = {
   kicker: "Quem somos",
   title: "Antes de sermos a Fishify, somos duas pessoas que nasceram do mar",
+  /* Encurtado a pedido, e encurtado com cuidado: o que sai são repetições
+     e rodeios, o que fica são os factos que só eles podem dizer. As
+     famílias do peixe, a Praia da Vieira, o ano e a faculdade, e a razão
+     pela qual a Fishify existe. A voz continua a ser a deles. */
   paragraphs: [
     {
       voz: null as Voz,
-      text: "Duas famílias inteiras ligadas ao peixe, há gerações.",
+      text: "Duas famílias ligadas ao peixe, há gerações.",
     },
     {
       voz: "rui" as Voz,
-      text: "Eu sou o Rui. Cresci no meio dos mercados a ver os meus pais trabalhar. Venho de uma família de pescadores e peixeiros desde os bisavós, e sempre ouvi dizer que o mar nos corre nas veias.",
+      text: "Eu sou o Rui. Cresci nos mercados a ver os meus pais trabalhar. Venho de pescadores e peixeiros desde os bisavós: o mar corre-nos nas veias.",
     },
     {
       voz: "beatriz" as Voz,
-      text: "Eu sou a Beatriz. Cresci na Praia da Vieira, numa família de mulheres fortes. A minha avó e a minha bisavó eram peixeiras. Aprendi a arte desde pequena.",
+      text: "Eu sou a Beatriz. Cresci na Praia da Vieira, e a minha avó e a minha bisavó eram peixeiras. Aprendi a arte desde pequena.",
     },
     {
       voz: "ambos" as Voz,
-      text: "Conhecemo-nos em 2016, na faculdade em Leiria. Ficámos na mesma turma e o destino tratou de nos aproximar. A Fishify surgiu como trabalho final de curso. A ideia era simples: levar o melhor peixe de Peniche diretamente às pessoas.",
+      text: "Conhecemo-nos em 2016, na faculdade em Leiria. A Fishify nasceu ali, como trabalho final de curso, com uma ideia simples: levar o melhor peixe de Peniche diretamente às pessoas.",
     },
     {
       voz: "ambos" as Voz,
-      text: "Hoje somos o Rui e a Beatriz, pessoas de família, humildes e trabalhadoras, que continuam uma tradição de gerações.",
+      text: "Hoje somos o Rui e a Beatriz, gente de família a continuar uma tradição de gerações.",
     },
   ],
   closing: "Fishify, a frescura do mar de Peniche, à sua mesa.",
