@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Newsreader, Outfit } from "next/font/google";
 import "./globals.css";
+import { asset } from "@/lib/asset";
 import { BRAND } from "@/content/site";
 import Reveal from "@/components/reveal";
 import SiteHeader from "@/components/site-header";
@@ -47,10 +48,12 @@ export const metadata: Metadata = {
     title: `${BRAND.name}, ${BRAND.tagline}`,
     description:
       "Peixe fresco da lota de Peniche entregue em casa. Entregas semanais na Grande Lisboa, Margem Sul, Oeste, Leiria e Santarém.",
-    images: [{ url: "/img/og.png", width: 1200, height: 630, alt: BRAND.name }],
+    images: [
+      { url: asset("/img/og.png"), width: 1200, height: 630, alt: BRAND.name },
+    ],
   },
   twitter: { card: "summary_large_image" },
-  icons: { icon: "/img/mark.svg" },
+  icons: { icon: asset("/img/mark.svg") },
 };
 
 export const viewport: Viewport = {

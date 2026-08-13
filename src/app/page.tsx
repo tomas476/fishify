@@ -1,6 +1,7 @@
 import Entregas from "@/components/entregas";
 import Faq from "@/components/faq";
 import Image from "next/image";
+import { asset } from "@/lib/asset";
 import FishExplode from "@/components/fish-explode";
 import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
@@ -49,7 +50,7 @@ export default function Home() {
                 é o que a secção tinha por dizer e não dizia. */}
             <figure className="sobre__foto" data-reveal="escala">
               <Image
-                src="/img/carrinha.webp"
+                src={asset("/img/carrinha.webp")}
                 alt="O Rui e a Beatriz à frente da carrinha da Fishify, no porto de Peniche"
                 width={1100}
                 height={733}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { asset } from "@/lib/asset";
 import { RETRATOS, STORY, type Voz } from "@/content/site";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +36,7 @@ function Retratos({ voz }: { voz: Voz }) {
       {quem.map((r) => (
         <Image
           key={r.src}
-          src={r.src}
+          src={asset(r.src)}
           alt=""
           width={96}
           height={96}

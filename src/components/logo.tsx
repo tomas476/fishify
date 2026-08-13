@@ -1,3 +1,4 @@
+import { asset } from "@/lib/asset";
 import { cn } from "@/lib/utils";
 
 /* =========================================================================
@@ -28,8 +29,8 @@ export default function Logo({ className }: Props) {
       style={{
         aspectRatio: String(RATIO),
         backgroundColor: "currentColor",
-        WebkitMaskImage: "url(/img/logo.svg)",
-        maskImage: "url(/img/logo.svg)",
+        WebkitMaskImage: `url(${asset("/img/logo.svg")})`,
+        maskImage: `url(${asset("/img/logo.svg")})`,
         WebkitMaskRepeat: "no-repeat",
         maskRepeat: "no-repeat",
         WebkitMaskPosition: "center",
@@ -50,8 +51,8 @@ export function LogoMark({ className }: Props) {
       style={{
         aspectRatio: String(MARK_RATIO),
         backgroundColor: "currentColor",
-        WebkitMaskImage: "url(/img/mark.svg)",
-        maskImage: "url(/img/mark.svg)",
+        WebkitMaskImage: `url(${asset("/img/mark.svg")})`,
+        maskImage: `url(${asset("/img/mark.svg")})`,
         WebkitMaskRepeat: "no-repeat",
         maskRepeat: "no-repeat",
         WebkitMaskPosition: "center",

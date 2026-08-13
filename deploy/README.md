@@ -46,3 +46,39 @@ fishify.imogrow.pt {
 ```
 
 e `cd ~/infra && docker compose restart caddy`.
+
+
+---
+
+## Pré-visualização pública (GitHub Pages)
+
+`https://tomas476.github.io/fishify/`
+
+Serve o branch **`gh-pages`**, que é descartável: é refeito a cada
+publicação e não se edita à mão. Não toca na VPS nem em nenhum site que
+esteja no ar.
+
+```bash
+NEXT_PUBLIC_BASE_PATH="/fishify" \
+NEXT_PUBLIC_SITE_URL="https://tomas476.github.io" \
+  npm run build
+
+git worktree add --detach /tmp/fishify-pages
+cd /tmp/fishify-pages && git checkout gh-pages
+find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+cp -R ~/Desktop/fishify/out/. . && touch .nojekyll
+git add -A && git commit -m "rebuild" && git push -f origin gh-pages
+```
+
+Duas armadilhas desta pré-visualização, ambas já pagas:
+
+1. **O `NEXT_PUBLIC_SITE_URL` é só a origem, sem a subpasta.** O prefixo
+   é acrescentado pelo `asset()`; pôr as duas coisas dava
+   `.../fishify/fishify/img/og.png` e cartão de partilha em branco.
+2. **O `next/image` não aplica o `basePath`** quando as imagens vão sem
+   optimizador, que é obrigatório num export estático. Por isso as
+   imagens dele também passam pelo `asset()`.
+
+O `.nojekyll` é obrigatório: sem ele o Jekyll do GitHub ignora a pasta
+`_next` inteira, porque começa por underscore, e o site fica sem
+JavaScript nenhum.

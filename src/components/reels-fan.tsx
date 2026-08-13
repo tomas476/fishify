@@ -13,6 +13,7 @@ import {
 import { REELS } from "@/content/site";
 import { num } from "@/lib/utils";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { asset } from "@/lib/asset";
 
 /* =========================================================================
    LEQUE DE REELS
@@ -325,7 +326,7 @@ export default function ReelsFan({ reels = REELS, className }: ReelsFanProps) {
               }}
             >
               <Image
-                src={`/reels/${reel.id}.webp`}
+                src={asset(`/reels/${reel.id}.webp`)}
                 alt=""
                 width={540}
                 height={960}

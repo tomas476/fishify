@@ -25,6 +25,13 @@ const nextConfig: NextConfig = {
      há servidor nenhum, e as imagens deste site já vão para o disco no
      tamanho exacto em que são mostradas. */
   images: { unoptimized: true },
+
+  /* Uma pagina de projecto do GitHub Pages vive numa subpasta com o nome do
+     repositorio (tomas476.github.io/fishify). Na VPS o site serve-se na
+     raiz, por isso o prefixo vem de fora e por omissao e vazio. Tem de ser
+     o MESMO valor que o `src/lib/asset.ts` le, senao metade dos ficheiros
+     procura-se no sitio errado. */
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
 };
 
 export default nextConfig;

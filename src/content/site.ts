@@ -17,7 +17,11 @@ export const BRAND = {
      pré-visualização é o endereço dela que tem de entrar nas etiquetas de
      partilha: um og:image apontado para um domínio que ainda não existe
      dá cartão em branco no WhatsApp. Definido por variável de ambiente no
-     build, com o destino final como valor por omissão. */
+     build, com o destino final como valor por omissão.
+
+     É só a ORIGEM, sem subpasta. O prefixo do `basePath` é acrescentado
+     pelo `asset()`, e pôr as duas coisas aqui dava
+     `.../fishify/fishify/img/og.png`, que é um 404 e um cartão em branco. */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://fishify.pt",
   email: "geral@fishify.pt",
   /** Só para `wa.me`. Nunca usar em `tel:` num CTA de navegação. */

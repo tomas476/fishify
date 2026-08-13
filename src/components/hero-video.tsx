@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { asset } from "@/lib/asset";
 
 /* =========================================================================
    O VÍDEO DO HERO
@@ -15,8 +16,8 @@ import { useEffect, useRef } from "react";
    ========================================================================= */
 
 const SMALL = "(max-width: 900px)";
-const SMALL_SRC = "/video/hero-sm.mp4";
-const FULL_SRC = "/video/hero.mp4";
+const SMALL_SRC = asset("/video/hero-sm.mp4");
+const FULL_SRC = asset("/video/hero.mp4");
 
 /** Fica no poster: sem movimento, sem gastar dados de quem os poupa. */
 function paused() {
@@ -155,7 +156,7 @@ export default function HeroVideo() {
       <video
         ref={ref}
         className="hero__video"
-        poster="/img/hero-poster.webp"
+        poster={asset("/img/hero-poster.webp")}
         /* Igual ao site do Tomás Marques, onde isto está provado em iOS:
            `muted` + `playsInline` + `preload="auto"`, e é o efeito que
            chama o play() depois de garantir o mudo. SEM `autoPlay`: o

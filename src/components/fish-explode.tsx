@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { asset } from "@/lib/asset";
 
 /* =========================================================================
    A DOURADA QUE SE ABRE AO SCROLL
@@ -39,7 +40,7 @@ const H = 980;
 
 /** `/frames/fish-001.webp` … `/frames/fish-061.webp` */
 function src(i: number) {
-  return `/frames/fish-${String(i + 1).padStart(3, "0")}.webp`;
+  return asset(`/frames/fish-${String(i + 1).padStart(3, "0")}.webp`);
 }
 
 /** Legendas ancoradas ao progresso: dão sentido ao movimento. */
