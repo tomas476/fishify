@@ -10,35 +10,41 @@ export const metadata: Metadata = {
     "Diga-nos quem é, onde quer receber e o que procura. Abrimos o WhatsApp com o pedido já escrito e respondemos com o peixe da semana e o dia da sua zona.",
 };
 
+/* Mesma arrumação da página de avaliação do Tomás Marques: rótulo e título
+   centrados, o selo da marca por baixo, e o painel do formulário a seguir.
+   Aqui o selo é o vídeo do logótipo a girar, que o cliente mandou. */
 export default function EncomendarPagina() {
   return (
-    <section
-      className="section"
-      style={{ paddingTop: "clamp(120px, 22vh, 180px)" }}
-    >
-      <div className="shell">
-        <p className="kicker" data-reveal>
-          Encomendar
-        </p>
-        <h1
-          className="display display--lg mt-4 max-w-[20ch]"
-          data-reveal="palavras"
-        >
-          Diga-nos o que procura.
-        </h1>
-        <p className="lede mt-6 max-w-[52ch]" data-reveal>
-          Respondemos com o que veio da lota de {BRAND.origin} nessa semana, a
-          que preço, e em que dia a carrinha passa na sua zona.
-        </p>
+    <>
+      <section
+        className="section--tight"
+        style={{ paddingTop: "clamp(120px, 22vh, 180px)" }}
+      >
+        <div className="shell shell--narrow text-center">
+          <p className="kicker" data-reveal>
+            Encomenda sem compromisso
+          </p>
+          <h1 className="display display--lg mt-3" data-reveal="palavras">
+            Diga-nos o que procura.
+          </h1>
+          <p className="lede mx-auto mt-5 max-w-[46ch]" data-reveal>
+            Respondemos com o que veio da lota de {BRAND.origin} nessa semana,
+            a que preço, e em que dia a carrinha passa na sua zona.
+          </p>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[1.25fr_1fr]">
-          <div data-reveal>
+          <div className="mt-10 flex justify-center" data-reveal="escala">
+            <MarcaAnimada className="marca-animada marca-animada--selo" />
+          </div>
+        </div>
+      </section>
+
+      <section className="section--tight pb-[clamp(56px,11vw,120px)]">
+        <div className="shell shell--narrow">
+          <div className="painel-form" data-reveal="escala">
             <EncomendaForm />
           </div>
 
-          <aside data-reveal="escala">
-            <MarcaAnimada className="marca-animada mb-8" />
-
+          <div className="mt-12" data-reveal>
             <h2 className="display display--md">Quando respondemos</h2>
             <div className="mt-5">
               <Horario />
@@ -47,9 +53,9 @@ export default function EncomendarPagina() {
               Fora deste horário a mensagem fica à espera e respondemos na
               manhã seguinte.
             </p>
-          </aside>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

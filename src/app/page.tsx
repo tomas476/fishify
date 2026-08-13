@@ -1,13 +1,12 @@
 import Entregas from "@/components/entregas";
-import EncomendaForm from "@/components/encomenda-form";
 import Faq from "@/components/faq";
 import Image from "next/image";
+import Link from "next/link";
 import { asset } from "@/lib/asset";
 import FishExplode from "@/components/fish-explode";
 import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
 import Horario from "@/components/horario";
-import MarcaAnimada from "@/components/marca-animada";
 import Passos from "@/components/passos";
 import ReelsCarrossel from "@/components/reels-carrossel";
 import { BRAND, WA_MESSAGES, wa } from "@/content/site";
@@ -95,20 +94,9 @@ export default function Home() {
       {/* ---------- ENTREGAS ---------- */}
       <section className="section band" id="entregas">
         <div className="shell">
-          <p className="kicker" data-reveal>
-            Entregas
-          </p>
-          <h2
-            className="display display--lg mt-4 max-w-[20ch]"
-            data-reveal="palavras"
-          >
+          <h2 className="display display--lg max-w-[20ch]" data-reveal="palavras">
             Onde a nossa carrinha chega.
           </h2>
-          <p className="lede mt-5 max-w-[52ch]" data-reveal>
-            A carrinha sai de Peniche com o peixe escolhido nessa manhã e faz
-            uma zona de cada vez. Toque na sua para ver os concelhos que
-            fazemos.
-          </p>
           <div className="mt-12">
             <Entregas cta="detalhes" />
           </div>
@@ -142,37 +130,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- FALAR CONNOSCO ---------- */}
+      {/* ---------- FALAR CONNOSCO ----------
+          O formulário NÃO vive aqui. Como no site do Marques, a landing
+          convida e a página própria é que o tem: um formulário de três
+          passos no meio de uma landing rouba-lhe o fôlego e faz a página
+          crescer sem necessidade. */}
       <section className="section band" id="contactos">
         <div className="shell">
-          <p className="kicker" data-reveal>
-            Falar connosco
-          </p>
-          <h2
-            className="display display--lg mt-4 max-w-[18ch]"
-            data-reveal="palavras"
-          >
-            Diga-nos o que procura.
-          </h2>
-          <p className="lede mt-5 max-w-[52ch]" data-reveal>
-            Preencha e abrimos o WhatsApp com o pedido já escrito. Respondemos
-            com o peixe da semana, o preço e o dia da sua zona.
-          </p>
-
-          <div className="mt-12 grid gap-12 lg:grid-cols-[1.25fr_1fr]">
-            <div data-reveal>
-              <EncomendaForm />
-            </div>
-
-            <aside data-reveal="escala">
-              <MarcaAnimada className="marca-animada mb-8" />
-
-              <h3 className="display display--md">Quando respondemos</h3>
-              <div className="mt-5">
-                <Horario />
+          <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-start">
+            <div>
+              <h2 className="display display--lg max-w-[16ch]" data-reveal="palavras">
+                Quer peixe fresco em casa esta semana?
+              </h2>
+              <p className="lede mt-5 max-w-[46ch]" data-reveal>
+                Diga-nos quem é, onde quer receber e o que procura.
+                Respondemos com o que veio da lota de {BRAND.origin}, a que
+                preço, e em que dia a carrinha passa na sua zona.
+              </p>
+              <div className="mt-9" data-reveal>
+                <Link className="btn btn--solid btn--block sm:w-auto" href="/encomendar">
+                  Fazer uma encomenda
+                </Link>
               </div>
 
-              <ul className="mt-8 space-y-2 text-[var(--color-ink-2)]">
+              <ul className="mt-10 space-y-2 text-[var(--color-ink-2)]" data-reveal>
+                <li>
+                  WhatsApp:{" "}
+                  <a
+                    className="underline underline-offset-4"
+                    href={wa(WA_MESSAGES.general)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {BRAND.phoneLabel}
+                  </a>
+                </li>
                 <li>
                   Email:{" "}
                   <a
@@ -193,19 +185,19 @@ export default function Home() {
                     {BRAND.instagramHandle}
                   </a>
                 </li>
-                <li>
-                  WhatsApp:{" "}
-                  <a
-                    className="underline underline-offset-4"
-                    href={wa(WA_MESSAGES.general)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {BRAND.phoneLabel}
-                  </a>
-                </li>
               </ul>
-            </aside>
+            </div>
+
+            <div data-reveal="escala">
+              <h3 className="display display--md">Quando respondemos</h3>
+              <div className="mt-5">
+                <Horario />
+              </div>
+              <p className="muted mt-5 text-[0.92rem]">
+                Fora deste horário a mensagem fica à espera e respondemos na
+                manhã seguinte.
+              </p>
+            </div>
           </div>
         </div>
       </section>

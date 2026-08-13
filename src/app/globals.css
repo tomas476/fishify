@@ -1369,6 +1369,26 @@
     box-shadow: 0 12px 30px rgba(11, 32, 53, 0.18);
   }
 
+  /* No topo da página do formulário é maior, e leva um halo à volta como
+     o selo da página de avaliação do Marques. */
+  .marca-animada--selo {
+    width: clamp(120px, 34vw, 190px);
+    box-shadow:
+      0 0 0 10px rgba(76, 127, 180, 0.1),
+      0 0 0 22px rgba(76, 127, 180, 0.06),
+      0 18px 40px rgba(11, 32, 53, 0.2);
+  }
+
+  /* O painel do formulário, como o `vnd-painel` do Marques: uma chapa
+     clara que separa o formulário do fundo sem o encaixotar. */
+  .painel-form {
+    padding: clamp(22px, 5vw, 40px);
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    box-shadow: 0 18px 44px rgba(11, 32, 53, 0.08);
+  }
+
   /* ---------- os três passos ---------- */
 
   .passos-barra {

@@ -28,7 +28,9 @@ export default function Entregas({ cta = "agendar" }: Props) {
 
   return (
     <div>
-      <MapaEntregas onSelect={setZona} />
+      {/* Na landing o mapa é ilustração: sem lista de zonas e sem painel
+          de detalhe, que é o que vive na página das entregas. */}
+      <MapaEntregas onSelect={setZona} lista={cta !== "detalhes"} />
 
       <div className="mt-10 flex flex-col items-center gap-3 text-center">
         {cta === "detalhes" ? (

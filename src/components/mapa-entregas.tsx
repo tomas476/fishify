@@ -82,12 +82,19 @@ const T_ZONAS = 1.5;
 const PASSO = 0.14;
 
 type Props = {
+  /** `false` na landing: lá o mapa é ilustração e quem leva a informação a
+      sério é a página das entregas, para onde o botão aponta. */
+  lista?: boolean;
   /** Chamado sempre que a zona escolhida muda. Serve para ligar o CTA. */
   onSelect?: (zona: string) => void;
   className?: string;
 };
 
-export default function MapaEntregas({ onSelect, className }: Props) {
+export default function MapaEntregas({
+  onSelect,
+  className,
+  lista = true,
+}: Props) {
   const uid = useId().replace(/:/g, "");
   const raiz = useRef<HTMLDivElement>(null);
   const noEcrã = useInView(raiz, { once: true, amount: 0.2 });
@@ -387,7 +394,11 @@ export default function MapaEntregas({ onSelect, className }: Props) {
 
       <div>
         {/* Os botões são o mapa acessível: um percurso de teclado, alvos de
-            dedo com folga, e o mesmo estado que o desenho. */}
+            dedo com folga, e o mesmo estado que o desenho. Sem eles o mapa
+            fica sem percurso de teclado, e é por isso que o painel de
+            detalhe também sai: na landing o mapa passa a ilustração e a
+            informação vive toda em /entregas. */}
+        {lista && (
         <ul className="flex flex-wrap gap-2">
           {ZONES.map((zona) => {
             const viva = activa === zona.name;
@@ -414,7 +425,9 @@ export default function MapaEntregas({ onSelect, className }: Props) {
             );
           })}
         </ul>
+        )}
 
+        {lista && (
         <div
           className="panel panel--soft mt-4 min-h-[9.5rem]"
           aria-live="polite"
@@ -436,6 +449,7 @@ export default function MapaEntregas({ onSelect, className }: Props) {
             </>
           )}
         </div>
+        )}
       </div>
     </div>
   );
