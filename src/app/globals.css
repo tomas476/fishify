@@ -738,6 +738,51 @@
   }
 
   /* =========================================================================
+     A DOURADA EM FAIXA
+
+     Deitada, entre o "quem somos" e os três passos. O <img> é vertical
+     (390x980) e é rodado 90 graus, o que troca o que se vê: a largura
+     visível passa a ser a ALTURA do elemento.
+
+     Por isso a conta é ao contrário do que parece: fixa-se a altura da
+     faixa, dá-se ao <img> uma LARGURA igual a essa altura, e a altura dele
+     (2,513 vezes o valor, que é o rácio do frame) vira a largura visível.
+     Tirado do fluxo com posicionamento absoluto, senão a caixa por rodar
+     empurrava a página para baixo com o dobro da altura.
+     ========================================================================= */
+
+  .peixe-faixa {
+    position: relative;
+    height: clamp(112px, 17vw, 230px);
+    margin-block: clamp(32px, 7vw, 72px);
+  }
+
+  .fish__frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(112px, 17vw, 230px); /* igual à altura da faixa */
+    height: auto;
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  /* A legenda fica por baixo da faixa, fora do <img> rodado. */
+  .fish__caption {
+    position: absolute;
+    left: 50%;
+    bottom: -14px;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(90vw, 44ch);
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: clamp(0.9rem, 2.6vw, 1rem);
+    line-height: 1.4;
+    color: var(--ink-3);
+    transition: opacity 0.35s var(--ease);
+  }
+
+  /* =========================================================================
      CARTÕES DOS REELS
      ========================================================================= */
 

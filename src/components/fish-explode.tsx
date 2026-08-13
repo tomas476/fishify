@@ -94,24 +94,11 @@ export default function FishExplode({ className }: Props) {
       drawn = best;
     };
 
-    /* Quem manda no progresso muda com o desenho:
-
-       • Em duas colunas o peixe fica pegajoso e acompanha o texto todo, por
-         isso é a SECÇÃO que conta: a separação dura tanto quanto a leitura.
-       • Numa coluna o peixe atravessa o ecrã e desaparece muito antes do
-         fim do texto. Se medisse a secção, o peixe saía de vista com dois
-         cortes feitos e o resto acontecia onde ninguém o via, por isso
-         conta a travessia DELE.
-
-       Decidido a cada leitura e não uma vez só: rodar o telemóvel troca de
-       desenho sem remontar o componente. */
-    const alvo = () =>
-      window.matchMedia("(min-width: 900px)").matches
-        ? (el.closest(".sobre") as HTMLElement | null) ?? el
-        : el;
-
+    /* O progresso é a travessia da FAIXA pelo ecrã. Era medido contra a
+       secção do "quem somos" enquanto o peixe vivia lá dentro; agora a
+       faixa é uma peça sozinha entre duas secções e mede-se a si própria. */
     const progress = () => {
-      const rect = alvo().getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
       const curso = rect.height + vh;
       if (curso <= 0) return 0;
@@ -119,7 +106,9 @@ export default function FishExplode({ className }: Props) {
       /* A janela útil é encolhida nas pontas: o peixe fica inteiro enquanto
          entra e já está aberto antes de sair, em vez de chegar ao fim
          exactamente no instante em que desaparece. */
-      const bruto = (andado / curso - 0.14) / 0.64;
+      /* A faixa é baixa, por isso a travessia é curta: sem encolher a
+         janela útil, o peixe abria e fechava num piscar de olhos. */
+      const bruto = (andado / curso - 0.2) / 0.55;
       return Math.min(1, Math.max(0, bruto));
     };
 

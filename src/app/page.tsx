@@ -1,11 +1,12 @@
 import Entregas from "@/components/entregas";
 import Faq from "@/components/faq";
 import Image from "next/image";
+import FishExplode from "@/components/fish-explode";
 import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
 import Passos from "@/components/passos";
 import ReelsFan from "@/components/reels-fan";
-import { BRAND, HOURS, PILLARS, WA_MESSAGES, wa } from "@/content/site";
+import { BRAND, HOURS, WA_MESSAGES, wa } from "@/content/site";
 
 /* =========================================================================
    A LANDING, E É SÓ ISTO
@@ -62,22 +63,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- O QUE NOS SEPARA ---------- */}
-      <section className="section band">
-        <div className="shell">
-          <h2 className="display display--lg max-w-[20ch]" data-reveal="palavras">
-            Peixe que ainda estava no mar ontem.
-          </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3" data-reveal="cascata">
-            {PILLARS.map((pillar) => (
-              <div key={pillar.title}>
-                <h3 className="display display--md">{pillar.title}</h3>
-                <p className="mt-3 text-[var(--color-ink-2)]">{pillar.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ---------- A DOURADA, EM FAIXA ----------
+          Separa o "quem somos" dos passos. Deitada, pequena, e a separar-se
+          conforme o scroll. Substituiu a secção dos três pilares, que o
+          cliente mandou abaixo. */}
+      <FishExplode className="peixe-faixa" />
 
       {/* ---------- COMO FUNCIONA ---------- */}
       <section className="section">
