@@ -22,13 +22,13 @@ import { cn } from "@/lib/utils";
    propósito: é assim que eles já trabalham.
    ========================================================================= */
 
-type Campo = "nome" | "telefone" | "zona" | "pessoas" | "procura";
+type Campo = "nome" | "telefone" | "zona" | "quantidade" | "procura";
 
 const VAZIO: Record<Campo, string> = {
   nome: "",
   telefone: "",
   zona: "",
-  pessoas: "",
+  quantidade: "",
   procura: "",
 };
 
@@ -39,7 +39,7 @@ type Passo = {
 
 const PASSOS: Passo[] = [
   { legenda: "Com quem falo", campos: ["nome", "telefone"] },
-  { legenda: "Onde entregamos", campos: ["zona", "pessoas"] },
+  { legenda: "Onde entregamos", campos: ["zona", "quantidade"] },
   { legenda: "O que procura", campos: ["procura"] },
 ];
 
@@ -76,7 +76,7 @@ function mensagem(v: Record<Campo, string>) {
     `Contacto: ${v.telefone.trim()}`,
     `Zona: ${v.zona}`,
   ];
-  if (v.pessoas.trim()) linhas.push(`Para quantas pessoas: ${v.pessoas.trim()}`);
+  if (v.quantidade.trim()) linhas.push(`Quantidade: ${v.quantidade.trim()}`);
   if (v.procura.trim()) linhas.push("", `O que procuro: ${v.procura.trim()}`);
   return linhas.join("\n");
 }
@@ -220,18 +220,22 @@ export default function EncomendaForm() {
             </p>
 
             <p className="formulario__campo">
-              <label className="formulario__rotulo" htmlFor="enc-pessoas">
-                Para quantas pessoas <span className="muted">(opcional)</span>
+              <label className="formulario__rotulo" htmlFor="enc-quantidade">
+                Que quantidade <span className="muted">(opcional)</span>
               </label>
+              {/* Campo de TEXTO e não numérico: o peixe vende-se ao quilo,
+                  mas quem encomenda tanto escreve "2 kg" como "para
+                  quatro pessoas" ou "uma dourada grande". Forçar um
+                  número obrigava a traduzir a cabeça de quem compra para
+                  a unidade de quem vende. */}
               <input
-                {...comum("pessoas")}
+                {...comum("quantidade")}
                 ref={(el) => {
-                  refs.current.pessoas = el;
+                  refs.current.quantidade = el;
                 }}
                 type="text"
-                inputMode="numeric"
-                placeholder="4"
-                onChange={(e) => escrever("pessoas")(e.target.value)}
+                placeholder="2 kg, ou para quatro pessoas"
+                onChange={(e) => escrever("quantidade")(e.target.value)}
               />
             </p>
           </div>
