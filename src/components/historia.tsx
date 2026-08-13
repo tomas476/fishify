@@ -1,21 +1,22 @@
 import Image from "next/image";
 import { RETRATOS, STORY, type Voz } from "@/content/site";
+import { cn } from "@/lib/utils";
 
 /* =========================================================================
    QUEM SOMOS
 
-   Sem cartão. O texto vive no fundo aberto da página e é a tipografia que
-   faz a disposição: o rótulo, o título grande, os parágrafos numa medida
-   confortável, e a frase de remate a fechar em tamanho de display.
+   Sem cartão. O texto vive no fundo aberto e a disposição é tipográfica:
+   rótulo, título grande, os parágrafos numa serifa que é a única do site,
+   e a frase de remate a fechar em display.
 
-   Cada parágrafo leva no CANTO SUPERIOR DIREITO o retrato de quem está a
-   falar, como um autocolante posto ali à mão: ligeiramente torto, com um
-   rebordo claro à volta e sombra curta. Nos parágrafos em que falam os
-   dois, os dois retratos lado a lado e tortos ao contrário um do outro.
+   Os parágrafos com voz ALTERNAM de lado. O primeiro com retrato traz-o à
+   direita, o seguinte à esquerda com o texto recuado, e por aí fora. É
+   essa alternância que faz a secção ler-se como uma conversa entre os dois
+   em vez de uma coluna de texto com enfeites todos do mesmo lado.
 
-   `float: right` e não posicionamento absoluto: é o que faz o texto
-   escoar-se à volta do autocolante em vez de lhe passar por baixo. Com
-   `position: absolute` a primeira linha corria por cima da cara.
+   `float` e não posicionamento absoluto: é o que faz o texto escoar-se à
+   volta do autocolante. Com `position: absolute` a primeira linha corria
+   por cima da cara.
    ========================================================================= */
 
 function Retratos({ voz }: { voz: Voz }) {
@@ -36,8 +37,8 @@ function Retratos({ voz }: { voz: Voz }) {
           key={r.src}
           src={r.src}
           alt=""
-          width={112}
-          height={112}
+          width={96}
+          height={96}
           className="autocolante__foto"
         />
       ))}
@@ -46,6 +47,15 @@ function Retratos({ voz }: { voz: Voz }) {
 }
 
 export default function Historia() {
+  /* Conta só os parágrafos que têm retrato: são esses que alternam. Se um
+     parágrafo sem voz entrasse na conta, a alternância saltava um lado.
+     Calculado antes do render e não com um contador a ser reatribuído lá
+     dentro, que é coisa que o React não garante entre renderizações. */
+  let vistos = 0;
+  const lados = STORY.paragraphs.map((p) =>
+    p.voz ? vistos++ % 2 === 1 : false
+  );
+
   return (
     <div className="historia">
       <p className="kicker" data-reveal>
@@ -56,12 +66,23 @@ export default function Historia() {
       </h2>
 
       <div className="historia__texto">
-        {STORY.paragraphs.map((p) => (
-          <p key={p.text} className="historia__p" data-reveal>
-            <Retratos voz={p.voz} />
-            {p.text}
-          </p>
-        ))}
+        {STORY.paragraphs.map((p, i) => {
+          const esquerda = lados[i];
+
+          return (
+            <p
+              key={p.text}
+              className={cn(
+                "historia__p",
+                esquerda && "historia__p--esquerda"
+              )}
+              data-reveal
+            >
+              <Retratos voz={p.voz} />
+              {p.text}
+            </p>
+          );
+        })}
       </div>
 
       <p className="historia__remate" data-reveal>

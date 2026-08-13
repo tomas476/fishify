@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Outfit } from "next/font/google";
+import { Instrument_Sans, Newsreader, Outfit } from "next/font/google";
 import "./globals.css";
 import { BRAND } from "@/content/site";
 import Reveal from "@/components/reveal";
@@ -13,6 +13,17 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   display: "swap",
+});
+
+/* A voz do Rui e da Beatriz não pode sair na mesma letra dos rótulos e
+   dos botões. A Newsreader é uma serifa editorial quente, com italico a
+   sério, e é a única fonte do site que não é sans: é isso que faz o texto
+   deles ler-se como uma carta e não como interface. */
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-story",
+  display: "swap",
+  style: ["normal", "italic"],
 });
 
 const instrument = Instrument_Sans({
@@ -53,7 +64,7 @@ export default function RootLayout({
     <html
       lang="pt-PT"
       data-scroll-behavior="smooth"
-      className={`${outfit.variable} ${instrument.variable}`}
+      className={`${outfit.variable} ${instrument.variable} ${newsreader.variable}`}
     >
       <body>
         <a href="#conteudo" className="sr-only focus:not-sr-only">
