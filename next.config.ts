@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
         /_next/webpack-hmr from 192.168.1.228"
 
      Só afecta desenvolvimento. Em produção não existe. */
-  allowedDevOrigins: ["192.168.1.228", "192.168.1.*", "*.local"],
+  allowedDevOrigins: ["127.0.0.1", "192.168.1.228", "192.168.1.*", "*.local"],
 
   /* O site é inteiramente estático (todas as rotas saem prerenderizadas),
      por isso exporta-se para HTML e serve-se com o Caddy, como já se faz

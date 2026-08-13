@@ -608,6 +608,27 @@
     color: rgba(255, 255, 255, 0.9);
   }
 
+  /* A acção secundária do hero é uma LIGAÇÃO DE TEXTO e não um segundo
+     botão. Dois botões em pílula lado a lado, um cheio e um fantasma, é
+     o item 5.1 da lista de elementos banidos: duas acções com o mesmo
+     peso querem dizer que ninguém decidiu qual é a principal. */
+  .hero__secundaria {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: #ffffff;
+    font-size: 1rem;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+    transition: text-decoration-color 0.25s var(--ease);
+  }
+
+  .hero__secundaria:hover {
+    text-decoration-color: #ffffff;
+  }
+
   /* =========================================================================
      SOBRE NÓS: a fotografia deles e o cartão com o texto
      ========================================================================= */
@@ -974,13 +995,32 @@
     display: block;
   }
 
+  /* Regra do kit para ecrãs estreitos: o `backdrop-filter` é caro em GPU
+     no telemóvel e come legibilidade quando o painel ocupa quase o ecrã
+     todo. Sai o desfoque, o fundo passa a opaco. */
+  @media (max-width: 880px) {
+    .nav__bar,
+    .nav__panel {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+
+    .nav[data-solid="true"] .nav__bar,
+    .nav__panel {
+      background: var(--paper);
+    }
+  }
+
   @media (min-width: 900px) {
     .nav__panel[data-aberto="true"] {
       display: none;
     }
   }
 
-  .nav__panel a {
+  /* `:not(.btn)` NÃO é zelo: sem isso esta regra ganhava ao `.btn--solid`
+     por especificidade e o botão de encomendar dentro do menu saía com
+     tinta escura sobre o azul, a 2,62:1. Apanhado a medir, não a olhar. */
+  .nav__panel a:not(.btn) {
     display: block;
     padding: 12px 14px;
     border-radius: 12px;
@@ -988,7 +1028,7 @@
     font-size: 1.02rem;
   }
 
-  .nav__panel a:hover {
+  .nav__panel a:not(.btn):hover {
     background: var(--accent-soft);
   }
 

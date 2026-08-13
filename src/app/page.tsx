@@ -25,7 +25,8 @@ export default function Home() {
         <HeroVideo />
         <div className="shell hero__body">
           <h1 className="display display--xl max-w-[16ch]">{BRAND.tagline}</h1>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+          {/* UMA acção principal, e a segunda como ligação de texto. */}
+          <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
             <a
               className="btn btn--solid btn--block"
               href={wa(WA_MESSAGES.order)}
@@ -34,8 +35,8 @@ export default function Home() {
             >
               Encomendar pelo WhatsApp
             </a>
-            <a className="btn btn--ghost btn--block" href="#entregas">
-              Ver zonas de entrega
+            <a className="hero__secundaria" href="#entregas">
+              Ver onde entregamos
             </a>
           </div>
         </div>
