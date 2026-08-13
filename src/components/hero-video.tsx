@@ -112,6 +112,25 @@ export default function HeroVideo() {
       sync();
     };
 
+    /* O VÍDEO PARA QUANDO SAI DO ECRÃ E VOLTA A ANDAR QUANDO REGRESSA.
+
+       Sem isto, descer o site todo e voltar ao topo dava com o vídeo
+       congelado: o iOS suspende a descodificação de um vídeo que está há
+       muito fora de vista e não o retoma sozinho ao voltar. E além de
+       resolver isso, poupa bateria enquanto ninguém o está a ver.
+
+       Só o `visibilitychange` não chegava: esse cobre a app em segundo
+       plano, não o elemento fora do ecrã. */
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        if (!entrada) return;
+        if (entrada.isIntersecting) sync();
+        else video.pause();
+      },
+      { threshold: 0.01 }
+    );
+    observador.observe(video);
+
     sync();
     /* O `canplay` cobre o caso de o efeito correr antes de haver dados:
        aí o primeiro play() falha por razões que não são de política. */
@@ -122,6 +141,7 @@ export default function HeroVideo() {
     small.addEventListener("change", onChange);
 
     return () => {
+      observador.disconnect();
       video.removeEventListener("canplay", sync);
       document.removeEventListener("visibilitychange", sync);
       reducedMotion.removeEventListener("change", onChange);

@@ -2,16 +2,20 @@ import Image from "next/image";
 import { RETRATOS, STORY, type Voz } from "@/content/site";
 
 /* =========================================================================
-   O CARTÃO DE "QUEM SOMOS"
+   QUEM SOMOS
 
-   O texto deles vive dentro de um cartão, e cada parágrafo leva no canto a
-   fotografia redonda de quem está a falar: o Rui na parte dele, a Beatriz
-   na dela, e as duas lado a lado quando falam em conjunto. É isso que
-   transforma um texto corrido numa conversa.
+   Sem cartão. O texto vive no fundo aberto da página e é a tipografia que
+   faz a disposição: o rótulo, o título grande, os parágrafos numa medida
+   confortável, e a frase de remate a fechar em tamanho de display.
 
-   As fotografias são decorativas: quem é que fala já está escrito na
-   primeira palavra de cada parágrafo ("Eu sou o Rui"). Por isso levam
-   `alt` vazio e não repetem a informação a quem ouve a página.
+   Cada parágrafo leva no CANTO SUPERIOR DIREITO o retrato de quem está a
+   falar, como um autocolante posto ali à mão: ligeiramente torto, com um
+   rebordo claro à volta e sombra curta. Nos parágrafos em que falam os
+   dois, os dois retratos lado a lado e tortos ao contrário um do outro.
+
+   `float: right` e não posicionamento absoluto: é o que faz o texto
+   escoar-se à volta do autocolante em vez de lhe passar por baixo. Com
+   `position: absolute` a primeira linha corria por cima da cara.
    ========================================================================= */
 
 function Retratos({ voz }: { voz: Voz }) {
@@ -23,15 +27,18 @@ function Retratos({ voz }: { voz: Voz }) {
       : [voz === "rui" ? RETRATOS.rui : RETRATOS.beatriz];
 
   return (
-    <span className="historia__retratos" aria-hidden="true">
+    /* Decorativo: quem fala já está escrito na primeira palavra do
+       parágrafo ("Eu sou o Rui"), por isso os retratos não repetem essa
+       informação a quem ouve a página. */
+    <span className="autocolante" aria-hidden="true">
       {quem.map((r) => (
         <Image
           key={r.src}
           src={r.src}
           alt=""
-          width={88}
-          height={88}
-          className="historia__retrato"
+          width={112}
+          height={112}
+          className="autocolante__foto"
         />
       ))}
     </span>
@@ -40,13 +47,15 @@ function Retratos({ voz }: { voz: Voz }) {
 
 export default function Historia() {
   return (
-    <div className="panel historia" data-reveal="escala">
-      <p className="kicker">{STORY.kicker}</p>
+    <div className="historia">
+      <p className="kicker" data-reveal>
+        {STORY.kicker}
+      </p>
       <h2 className="display display--lg mt-4" data-reveal="palavras">
         {STORY.title}
       </h2>
 
-      <div className="mt-8 flex flex-col gap-6">
+      <div className="historia__texto">
         {STORY.paragraphs.map((p) => (
           <p key={p.text} className="historia__p" data-reveal>
             <Retratos voz={p.voz} />
@@ -55,7 +64,7 @@ export default function Historia() {
         ))}
       </div>
 
-      <p className="display display--md mt-9" data-reveal>
+      <p className="historia__remate" data-reveal>
         {STORY.closing}
       </p>
     </div>

@@ -641,40 +641,72 @@
     height: auto;
   }
 
-  /* ---------- o cartão do texto ---------- */
+  /* ---------- o texto, sem caixa nenhuma ---------- */
+
+  .historia__texto {
+    margin-top: clamp(28px, 5vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(22px, 4vw, 30px);
+  }
 
   .historia__p {
-    position: relative;
+    max-width: 62ch;
     color: var(--ink-2);
     text-wrap: pretty;
   }
 
-  /* Os retratos entram no canto superior esquerdo do parágrafo e o texto
-     escoa-se à volta deles. `float` e não posicionamento absoluto: é a
-     única forma de as primeiras linhas se encostarem à fotografia sem lhe
-     passarem por cima nem deixarem um buraco por baixo. */
-  .historia__retratos {
-    float: left;
+  /* A frase de remate fecha a secção em tamanho de display e no azul
+     escuro da marca. É o único sítio da secção com cor de acento. */
+  .historia__remate {
+    margin-top: clamp(32px, 6vw, 48px);
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.35rem, 4vw, 1.9rem);
+    line-height: 1.14;
+    letter-spacing: -0.02em;
+    color: var(--accent-deep);
+    text-wrap: balance;
+  }
+
+  /* ---------- os autocolantes ---------- */
+
+  .autocolante {
+    float: right;
     display: flex;
-    gap: 4px;
-    margin: 2px 12px 4px 0;
+    margin: 0 0 10px 16px;
   }
 
-  .historia__retrato {
-    width: 40px;
-    height: 40px;
+  .autocolante__foto {
+    width: 54px;
+    height: 54px;
     border-radius: 999px;
-    box-shadow: 0 0 0 2px var(--paper);
-  }
-
-  .historia__retratos .historia__retrato + .historia__retrato {
-    margin-left: -14px; /* os dois juntos, sobrepostos, como um par */
+    /* rebordo claro do autocolante, mais uma sombra curta para ele
+       assentar por cima do texto em vez de flutuar */
+    box-shadow:
+      0 0 0 3px var(--paper),
+      0 4px 12px rgba(11, 32, 53, 0.18);
+    transform: rotate(4deg);
   }
 
   @media (min-width: 640px) {
-    .historia__retrato {
-      width: 46px;
-      height: 46px;
+    .autocolante__foto {
+      width: 64px;
+      height: 64px;
+    }
+  }
+
+  /* Os dois juntos: sobrepostos e tortos ao contrário um do outro, que é
+     como fica um par de autocolantes colados à pressa. */
+  .autocolante__foto + .autocolante__foto {
+    margin-left: -18px;
+    transform: rotate(-5deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .autocolante__foto {
+      transform: none;
     }
   }
 
