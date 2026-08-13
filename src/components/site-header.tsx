@@ -7,11 +7,11 @@ import Logo from "@/components/logo";
 /* =========================================================================
    NAVBAR EM CÁPSULA FLUTUANTE
 
-   O site é uma página só, por isso os links são ÂNCORAS e não navegação:
-   `<a href="#seccao">` simples, sem `next/link`. Com `next/link` um hash
-   passa pelo router, e num telemóvel onde a hidratação falhe o menu deixa
-   de fazer seja o que for. Assim, mesmo sem JavaScript nenhum, tocar num
-   item salta para a secção certa.
+   Os links são `<a>` simples, mesmo os que vão para outra página, e não
+   `next/link`. Num telemóvel onde a hidratação falhe, o `next/link` deixa
+   de navegar de todo; um `<a>` continua a levar ao sítio certo mesmo sem
+   JavaScript nenhum, que é a rede de segurança que este site já precisou
+   de ter uma vez.
 
    UM estado, tratado pelo CSS a partir de um atributo:
    • data-solid: a cápsula ganha corpo branco assim que a página sai do topo
@@ -43,7 +43,15 @@ export default function SiteHeader() {
   return (
     <header className="nav" data-solid={solid}>
       <div className="nav__bar">
-        <a href="#topo" aria-label={`${BRAND.name}, ir para o início`}>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
+            um <a> a sério e não next/link: se a hidratação falhar num
+            telemóvel, o next/link deixa de navegar e o site fica preso.
+            Já aconteceu neste projecto. */}
+        <a
+          href="/#topo"
+          className="nav__vidro"
+          aria-label={`${BRAND.name}, ir para o início`}
+        >
           <Logo className="nav__logo" />
         </a>
 

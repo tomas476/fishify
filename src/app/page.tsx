@@ -1,13 +1,15 @@
 import Entregas from "@/components/entregas";
+import EncomendaForm from "@/components/encomenda-form";
 import Faq from "@/components/faq";
 import Image from "next/image";
 import { asset } from "@/lib/asset";
 import FishExplode from "@/components/fish-explode";
 import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
+import Horario from "@/components/horario";
 import Passos from "@/components/passos";
-import ReelsFan from "@/components/reels-fan";
-import { BRAND, HOURS, WA_MESSAGES, wa } from "@/content/site";
+import ReelsStack from "@/components/reels-stack";
+import { BRAND, WA_MESSAGES, wa } from "@/content/site";
 
 /* =========================================================================
    A LANDING, E É SÓ ISTO
@@ -103,11 +105,11 @@ export default function Home() {
           </h2>
           <p className="lede mt-5 max-w-[52ch]" data-reveal>
             A carrinha sai de Peniche com o peixe escolhido nessa manhã e faz
-            uma zona de cada vez. Toque na sua para ver os concelhos e abrir a
-            conversa já com o nome dela escrito.
+            uma zona de cada vez. Toque na sua para ver os concelhos que
+            fazemos.
           </p>
           <div className="mt-12">
-            <Entregas />
+            <Entregas cta="detalhes" />
           </div>
         </div>
       </section>
@@ -125,7 +127,7 @@ export default function Home() {
             {BRAND.followers} pessoas veem o nosso peixe todas as semanas.
           </h2>
           <div className="mt-10">
-            <ReelsFan />
+            <ReelsStack />
           </div>
           <a
             className="btn mt-8"
@@ -139,33 +141,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- CONTACTOS ---------- */}
+      {/* ---------- FALAR CONNOSCO ---------- */}
       <section className="section band" id="contactos">
         <div className="shell">
           <p className="kicker" data-reveal>
-            Contactos
+            Falar connosco
           </p>
           <h2
             className="display display--lg mt-4 max-w-[18ch]"
             data-reveal="palavras"
           >
-            A encomenda começa numa mensagem.
+            Diga-nos o que procura.
           </h2>
+          <p className="lede mt-5 max-w-[52ch]" data-reveal>
+            Preencha e abrimos o WhatsApp com o pedido já escrito. Respondemos
+            com o peixe da semana, o preço e o dia da sua zona.
+          </p>
 
-          <div className="mt-10 grid gap-10 md:grid-cols-2" data-reveal="cascata">
-            <div>
-              <ul className="space-y-3 text-[var(--color-ink-2)]">
-                <li>
-                  WhatsApp:{" "}
-                  <a
-                    className="underline underline-offset-4"
-                    href={wa(WA_MESSAGES.general)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {BRAND.phoneLabel}
-                  </a>
-                </li>
+          <div className="mt-12 grid gap-12 lg:grid-cols-[1.25fr_1fr]">
+            <div data-reveal>
+              <EncomendaForm />
+            </div>
+
+            <aside data-reveal="escala">
+              <h3 className="display display--md">Quando respondemos</h3>
+              <div className="mt-5">
+                <Horario />
+              </div>
+
+              <ul className="mt-8 space-y-2 text-[var(--color-ink-2)]">
                 <li>
                   Email:{" "}
                   <a
@@ -186,33 +190,19 @@ export default function Home() {
                     {BRAND.instagramHandle}
                   </a>
                 </li>
+                <li>
+                  WhatsApp:{" "}
+                  <a
+                    className="underline underline-offset-4"
+                    href={wa(WA_MESSAGES.general)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {BRAND.phoneLabel}
+                  </a>
+                </li>
               </ul>
-              <a
-                className="btn btn--solid mt-8"
-                href={wa(WA_MESSAGES.order)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Encomendar pelo WhatsApp
-              </a>
-            </div>
-
-            <div>
-              <div className="facts">
-                {HOURS.map((h) => (
-                  <div key={h.day}>
-                    <span>{h.day}</span>
-                    <span className={h.hours ? "" : "muted"}>
-                      {h.hours ?? "encerrado"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="muted mt-4 text-[0.92rem]">
-                As entregas fazem-se no dia de cada zona. Se mandar mensagem
-                fora deste horário, respondemos na manhã seguinte.
-              </p>
-            </div>
+            </aside>
           </div>
         </div>
       </section>

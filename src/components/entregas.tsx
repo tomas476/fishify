@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import MapaEntregas from "@/components/mapa-entregas";
 import { WA_MESSAGES, wa } from "@/content/site";
 
@@ -16,7 +17,13 @@ import { WA_MESSAGES, wa } from "@/content/site";
    mapa seria uma armadilha em quem chega pelo telemóvel.
    ========================================================================= */
 
-export default function Entregas() {
+type Props = {
+  /** `detalhes` na landing, que só convida a saber mais; `agendar` na
+      página das entregas, onde já faz sentido abrir a conversa. */
+  cta?: "agendar" | "detalhes";
+};
+
+export default function Entregas({ cta = "agendar" }: Props) {
   const [zona, setZona] = useState<string | null>(null);
 
   return (
@@ -24,17 +31,31 @@ export default function Entregas() {
       <MapaEntregas onSelect={setZona} />
 
       <div className="mt-10 flex flex-col items-center gap-3 text-center">
-        <a
-          className="btn btn--solid btn--block sm:w-auto"
-          href={wa(zona ? WA_MESSAGES.zone(zona) : WA_MESSAGES.schedule)}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {zona ? `Agendar entrega em ${zona}` : "Agendar entrega"}
-        </a>
-        <p className="muted text-[0.9rem]">
-          Abre o WhatsApp com a mensagem já escrita.
-        </p>
+        {cta === "detalhes" ? (
+          <>
+            <Link className="btn btn--solid btn--block sm:w-auto" href="/entregas">
+              Ver detalhes das entregas
+            </Link>
+            <p className="muted text-[0.9rem]">
+              Os concelhos de cada zona, como funciona e as perguntas do
+              costume.
+            </p>
+          </>
+        ) : (
+          <>
+            <a
+              className="btn btn--solid btn--block sm:w-auto"
+              href={wa(zona ? WA_MESSAGES.zone(zona) : WA_MESSAGES.schedule)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {zona ? `Agendar entrega em ${zona}` : "Agendar entrega"}
+            </a>
+            <p className="muted text-[0.9rem]">
+              Abre o WhatsApp com a mensagem já escrita.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
