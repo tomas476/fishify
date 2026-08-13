@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BRAND, NAV, WA_MESSAGES, wa } from "@/content/site";
 import Logo from "@/components/logo";
@@ -9,21 +7,23 @@ import Logo from "@/components/logo";
 /* =========================================================================
    NAVBAR EM CÁPSULA FLUTUANTE
 
-   Dois estados, e é o CSS que trata dos dois a partir de dois atributos:
-   • data-solid: a cápsula ganha corpo branco assim que a página sai do
-                   topo. Em cima do hero é transparente com tinta branca.
-   • data-hidden: esconde-se ao descer, reaparece ao subir.
+   O site é uma página só, por isso os links são ÂNCORAS e não navegação:
+   `<a href="#seccao">` simples, sem `next/link`. Com `next/link` um hash
+   passa pelo router, e num telemóvel onde a hidratação falhe o menu deixa
+   de fazer seja o que for. Assim, mesmo sem JavaScript nenhum, tocar num
+   item salta para a secção certa.
 
-   Na home o topo é vídeo, por isso `solid` arranca em falso. Nas outras
-   rotas o topo é papel branco, e uma cápsula de tinta branca sobre papel
-   branco seria invisível: aí arranca já sólida.
+   Dois estados, tratados pelo CSS a partir de dois atributos:
+   • data-solid: a cápsula ganha corpo branco assim que a página sai do topo
+   • data-hidden: esconde-se ao descer, reaparece ao subir
+
+   O painel do menu está SEMPRE no DOM e é o atributo `data-aberto` que o
+   mostra. Montá-lo e desmontá-lo fazia o primeiro toque perder-se em iOS,
+   porque o elemento nascia debaixo do dedo a meio do gesto.
    ========================================================================= */
 
 export default function SiteHeader() {
-  const pathname = usePathname();
-  const overVideo = pathname === "/";
-
-  const [solid, setSolid] = useState(!overVideo);
+  const [solid, setSolid] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -32,9 +32,7 @@ export default function SiteHeader() {
 
     const onScroll = () => {
       const y = window.scrollY;
-      setSolid(!overVideo || y > 40);
-      /* Não se esconde no topo nem com o menu aberto: fugir com o painel
-         aberto deixava o menu a pairar sozinho. */
+      setSolid(y > 40);
       setHidden(y > 220 && y > last && !open);
       last = y;
     };
@@ -42,25 +40,22 @@ export default function SiteHeader() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [overVideo, open]);
+  }, [open]);
+
+  const fechar = () => setOpen(false);
 
   return (
     <header className="nav" data-solid={solid} data-hidden={hidden}>
       <div className="nav__bar">
-        <Link href="/" aria-label={`${BRAND.name}, ir para o início`}>
+        <a href="#topo" aria-label={`${BRAND.name}, ir para o início`}>
           <Logo className="nav__logo" />
-        </Link>
+        </a>
 
         <nav className="nav__links" aria-label="Principal">
           {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="nav__link"
-              aria-current={pathname === item.href ? "page" : undefined}
-            >
+            <a key={item.href} href={item.href} className="nav__link">
               {item.label}
-            </Link>
+            </a>
           ))}
           <a
             className="btn btn--solid"
@@ -77,9 +72,9 @@ export default function SiteHeader() {
           className="nav__toggle"
           aria-expanded={open}
           aria-controls="menu-principal"
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
           onClick={() => setOpen((v) => !v)}
         >
-          <span className="sr-only">{open ? "Fechar menu" : "Abrir menu"}</span>
           <svg
             width="20"
             height="14"
@@ -89,6 +84,9 @@ export default function SiteHeader() {
             strokeWidth="1.6"
             strokeLinecap="round"
             aria-hidden="true"
+            /* o SVG não pode receber o toque: em iOS o alvo passava a ser o
+               <path> e o clique perdia-se antes de chegar ao botão */
+            style={{ pointerEvents: "none" }}
           >
             {open ? (
               <>
@@ -106,27 +104,23 @@ export default function SiteHeader() {
         </button>
       </div>
 
-      {open && (
-        <div className="nav__panel" id="menu-principal">
-          {/* fecha no clique, e não num efeito ligado à rota: uma navegação
-              para a mesma página não muda o pathname e o painel ficava
-              aberto por baixo do conteúdo novo */}
-          {NAV.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-              {item.label}
-            </Link>
-          ))}
-          <a
-            className="btn btn--solid btn--block"
-            style={{ marginTop: 8 }}
-            href={wa(WA_MESSAGES.order)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Encomendar pelo WhatsApp
+      <div className="nav__panel" id="menu-principal" data-aberto={open}>
+        {NAV.map((item) => (
+          <a key={item.href} href={item.href} onClick={fechar}>
+            {item.label}
           </a>
-        </div>
-      )}
+        ))}
+        <a
+          className="btn btn--solid btn--block"
+          style={{ marginTop: 8 }}
+          href={wa(WA_MESSAGES.order)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={fechar}
+        >
+          Encomendar pelo WhatsApp
+        </a>
+      </div>
     </header>
   );
 }

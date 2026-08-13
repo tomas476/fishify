@@ -17,9 +17,12 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
    entra por baixo do ecrã o peixe está inteiro, quando sai por cima está
    todo aberto, e a página nunca deixa de responder ao dedo.
 
-   Porquê canvas e não 61 <img> empilhados: com <img> o browser só
-   descodifica a imagem quando ela fica visível, e a primeira passagem por
-   cada frame engasgava.
+   Um <img> só, com o `src` a trocar. A primeira versão era um <canvas>
+   com `drawImage`, e num iPhone ficava em branco: o canvas depende do
+   contexto 2D estar vivo e de o desenho acontecer, e qualquer falha
+   silenciosa deixa um rectângulo vazio sem nada que o denuncie. Um <img>
+   ou mostra a imagem ou mostra o alt. Os 61 frames são pré-carregados em
+   memória, portanto trocar o `src` é instantâneo e não vai à rede.
 
    Porquê não um <video> com `currentTime`: o seek de um vídeo comprimido
    salta para o keyframe anterior. Re-encodar tudo em keyframes daria um
@@ -57,22 +60,14 @@ type Props = {
 
 export default function FishExplode({ className }: Props) {
   const wrap = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
+  const img = useRef<HTMLImageElement>(null);
   const [caption, setCaption] = useState<string>(CAPTIONS[0].text);
   const still = useReducedMotion();
 
   useEffect(() => {
     const el = wrap.current;
-    const cv = canvas.current;
-    if (!el || !cv) return;
-
-    /* alpha: true, ao contrário da versão de fundo branco. O peixe é
-       recortado e o azul da página tem de passar por trás dele. */
-    const ctx = cv.getContext("2d");
-    if (!ctx) return;
-
-    cv.width = W;
-    cv.height = H;
+    const alvoImg = img.current;
+    if (!el || !alvoImg) return;
 
     const images = new Array<HTMLImageElement | null>(FRAMES).fill(null);
     let drawn = -1;
@@ -95,10 +90,7 @@ export default function FishExplode({ className }: Props) {
         }
       }
       if (best < 0 || best === drawn) return;
-      const img = images[best];
-      if (!img) return;
-      ctx.clearRect(0, 0, W, H);
-      ctx.drawImage(img, 0, 0, W, H);
+      alvoImg.src = src(best);
       drawn = best;
     };
 
@@ -145,16 +137,17 @@ export default function FishExplode({ className }: Props) {
     };
 
     if (still) {
-      const img = new Image();
-      img.src = src(FRAMES - 1);
-      img.onload = () => {
-        if (!alive) return;
-        images[FRAMES - 1] = img;
-        paint(FRAMES - 1);
-        setCaption(CAPTIONS[CAPTIONS.length - 1].text);
-      };
+      /* setCaption fora do corpo do efeito: a regra do projecto proíbe
+         setState síncrono lá dentro. */
+      images[FRAMES - 1] = new Image();
+      paint(FRAMES - 1);
+      const t = window.setTimeout(
+        () => setCaption(CAPTIONS[CAPTIONS.length - 1].text),
+        0
+      );
       return () => {
         alive = false;
+        window.clearTimeout(t);
       };
     }
 
@@ -169,17 +162,16 @@ export default function FishExplode({ className }: Props) {
       while (cursor < order.length && images[order[cursor]]) cursor++;
       if (cursor >= order.length) return;
       const index = order[cursor++];
-      const img = new Image();
-      img.decoding = "async";
-      img.src = src(index);
-      img.onload = () => {
+      const novo = new Image();
+      novo.decoding = "async";
+      novo.src = src(index);
+      novo.onload = () => {
         if (!alive) return;
-        images[index] = img;
-        if (index === 0 && drawn < 0) paint(0);
-        else onScroll();
+        images[index] = novo;
+        onScroll();
         loadNext();
       };
-      img.onerror = loadNext;
+      novo.onerror = loadNext;
     };
 
     loadNext();
@@ -199,11 +191,18 @@ export default function FishExplode({ className }: Props) {
 
   return (
     <div ref={wrap} className={className}>
-      <canvas
-        ref={canvas}
+      {/* eslint-disable-next-line @next/next/no-img-element -- o `src` troca
+          61 vezes por scroll; o next/image traria um wrapper e um pipeline
+          de optimização por cada frame, para imagens que já estão do
+          tamanho exacto em que são mostradas */}
+      <img
+        ref={img}
         className="fish__frame"
-        role="img"
-        aria-label="Uma dourada inteira que se separa em postas à medida que a página desce"
+        src={src(0)}
+        width={W}
+        height={H}
+        alt="Uma dourada inteira que se separa em postas à medida que a página desce"
+        decoding="async"
       />
       <p className="fish__caption">{caption}</p>
     </div>

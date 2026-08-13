@@ -148,11 +148,14 @@ export const FAQS = [
   },
 ] as const;
 
+/* Não há subpáginas. É tudo uma landing e o menu leva às secções dela,
+   por decisão do cliente: "nem precisas de criar subpáginas, pode ficar
+   tudo na landing e o menu encaminha para o sítio indicado". */
 export const NAV = [
-  { href: "/", label: "Início" },
-  { href: "/sobre", label: "Quem somos" },
-  { href: "/entregas", label: "Entregas" },
-  { href: "/contactos", label: "Contactos" },
+  { href: "#quem-somos", label: "Quem somos" },
+  { href: "#entregas", label: "Entregas" },
+  { href: "#reels", label: "Instagram" },
+  { href: "#contactos", label: "Contactos" },
 ] as const;
 
 /** Abre uma conversa de WhatsApp já escrita. Sem backend, como sempre. */

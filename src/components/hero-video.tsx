@@ -40,7 +40,11 @@ export default function HeroVideo() {
     const small = window.matchMedia(SMALL);
 
     const sync = () => {
+      /* Antes de tudo: em iOS um vídeo que não esteja mudo NO MOMENTO do
+         play é recusado, e o React não escreve o atributo `muted` no HTML
+         do servidor. Por isso o mudo põe-se aqui, sempre. */
       video.muted = true;
+      video.defaultMuted = true;
       if (paused()) {
         video.pause();
         return;
@@ -83,15 +87,16 @@ export default function HeroVideo() {
         ref={ref}
         className="hero__video"
         poster="/img/hero-poster.webp"
-        /* `autoPlay` no atributo E o play() no efeito. O atributo faz o
-           vídeo arrancar mesmo que o JS falhe ou chegue tarde, que foi o
-           que se viu num telemóvel quando o servidor de desenvolvimento
-           serviu um erro; o efeito continua a mandar nele depois. */
-        autoPlay
+        /* Igual ao site do Tomás Marques, onde isto está provado em iOS:
+           `muted` + `playsInline` + `preload="auto"`, e é o efeito que
+           chama o play() depois de garantir o mudo. SEM `autoPlay`: o
+           atributo sozinho não convence o iOS (o React nem sequer escreve
+           o `muted` no HTML do servidor) e o que aparecia era o botão de
+           play por cima do poster. */
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         controls={false}
         disablePictureInPicture
         aria-hidden="true"

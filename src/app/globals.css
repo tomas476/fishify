@@ -563,6 +563,7 @@
   }
 
   .hero__video {
+    pointer-events: none;
     position: absolute;
     inset: 0;
     width: 100%;
@@ -572,6 +573,7 @@
   }
 
   .hero__veil {
+    pointer-events: none;
     position: absolute;
     inset: 0;
     z-index: -1;
@@ -831,8 +833,10 @@
     color: var(--accent-deep);
   }
 
-  /* Painel do menu em ecrãs pequenos */
+  /* Painel do menu em ecrãs pequenos. Está sempre no DOM: é o
+     `data-aberto` que o mostra. */
   .nav__panel {
+    display: none;
     margin-top: 8px;
     padding: 10px;
     border-radius: 22px;
@@ -842,8 +846,12 @@
     backdrop-filter: blur(14px);
   }
 
+  .nav__panel[data-aberto="true"] {
+    display: block;
+  }
+
   @media (min-width: 900px) {
-    .nav__panel {
+    .nav__panel[data-aberto="true"] {
       display: none;
     }
   }
@@ -861,6 +869,13 @@
   }
 
   .nav__toggle {
+    position: relative;
+    z-index: 1;
+    /* tira o atraso de 300 ms e o duplo-toque para ampliar em iOS, que era
+       o que fazia o primeiro toque parecer que não fazia nada */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    appearance: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
