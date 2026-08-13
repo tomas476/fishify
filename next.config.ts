@@ -14,6 +14,17 @@ const nextConfig: NextConfig = {
 
      Só afecta desenvolvimento. Em produção não existe. */
   allowedDevOrigins: ["192.168.1.228", "192.168.1.*", "*.local"],
+
+  /* O site é inteiramente estático (todas as rotas saem prerenderizadas),
+     por isso exporta-se para HTML e serve-se com o Caddy, como já se faz
+     com o site do Tomás Marques na mesma VPS. Sem processo Node a correr,
+     sem container com runtime, e o deploy passa a ser copiar uma pasta. */
+  output: "export",
+
+  /* O optimizador de imagens do Next precisa de servidor. Com `export` não
+     há servidor nenhum, e as imagens deste site já vão para o disco no
+     tamanho exacto em que são mostradas. */
+  images: { unoptimized: true },
 };
 
 export default nextConfig;
