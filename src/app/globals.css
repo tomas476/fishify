@@ -584,6 +584,24 @@
     z-index: -2;
   }
 
+  /* O BLEND: a base do vídeo funde-se no azul da página em vez de acabar
+     numa aresta. É o mesmo gesto do site do Tomás Marques, onde o plano
+     nunca tem fim visível. Vive por cima do véu e por baixo do texto. */
+  .hero__blend {
+    pointer-events: none;
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: -1;
+    height: clamp(90px, 18vh, 190px);
+    background: linear-gradient(
+      to bottom,
+      rgba(231, 242, 251, 0) 0%,
+      rgba(231, 242, 251, 0.28) 55%,
+      rgba(231, 242, 251, 0.72) 82%,
+      var(--paper) 100%
+    );
+  }
+
   .hero__veil {
     pointer-events: none;
     position: absolute;
@@ -612,6 +630,21 @@
      botão. Dois botões em pílula lado a lado, um cheio e um fantasma, é
      o item 5.1 da lista de elementos banidos: duas acções com o mesmo
      peso querem dizer que ninguém decidiu qual é a principal. */
+  /* O botão do hero é MAIOR e mais cheio do que os do resto da página:
+     é a única acção principal do site e tem de se ver que é. Fora do
+     hero, os botões ficam como estão. */
+  .hero .btn--solid {
+    min-height: 56px;
+    padding: 0.9em 1.9em;
+    font-size: 1.05rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(11, 32, 53, 0.35);
+  }
+
+  .hero .btn--solid:hover {
+    box-shadow: 0 14px 38px rgba(11, 32, 53, 0.45);
+  }
+
   .hero__secundaria {
     display: inline-flex;
     align-items: center;
@@ -759,48 +792,41 @@
   }
 
   /* =========================================================================
-     A DOURADA EM FAIXA
+     A DOURADA AO LADO DOS PASSOS
 
-     Deitada, entre o "quem somos" e os três passos. O <img> é vertical
-     (390x980) e é rodado 90 graus, o que troca o que se vê: a largura
-     visível passa a ser a ALTURA do elemento.
+     Em pé, à direita da sequência, nos dois tamanhos de ecrã. O <img> é
+     vertical (390x980) e aqui NÃO roda, ao contrário da faixa que isto
+     substituiu: fica na orientação natural.
 
-     Por isso a conta é ao contrário do que parece: fixa-se a altura da
-     faixa, dá-se ao <img> uma LARGURA igual a essa altura, e a altura dele
-     (2,513 vezes o valor, que é o rácio do frame) vira a largura visível.
-     Tirado do fluxo com posicionamento absoluto, senão a caixa por rodar
-     empurrava a página para baixo com o dobro da altura.
+     Em telemóvel os textos dos passos encolhem para lhe abrir espaço, e é
+     por isso que a coluna do peixe é uma fracção e não uma largura fixa.
      ========================================================================= */
 
-  .peixe-faixa {
-    position: relative;
-    height: clamp(112px, 17vw, 230px);
-    margin-block: clamp(32px, 7vw, 72px);
+  .passos-com-peixe {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(84px, 0.3fr);
+    gap: clamp(12px, 4vw, 48px);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .passos-com-peixe {
+      grid-template-columns: minmax(0, 1fr) minmax(180px, 0.38fr);
+    }
+  }
+
+  .passos__peixe {
+    /* Acompanha a leitura dos três passos em vez de passar de raspão. */
+    position: sticky;
+    top: 104px;
+    display: flex;
+    justify-content: center;
   }
 
   .fish__frame {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: clamp(112px, 17vw, 230px); /* igual à altura da faixa */
+    width: 100%;
+    max-width: 300px;
     height: auto;
-    transform: translate(-50%, -50%) rotate(90deg);
-  }
-
-  /* A legenda fica por baixo da faixa, fora do <img> rodado. */
-  .fish__caption {
-    position: absolute;
-    left: 50%;
-    bottom: -14px;
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: min(90vw, 44ch);
-    text-align: center;
-    font-family: var(--font-serif);
-    font-size: clamp(0.9rem, 2.6vw, 1rem);
-    line-height: 1.4;
-    color: var(--ink-3);
-    transition: opacity 0.35s var(--ease);
   }
 
   /* =========================================================================
@@ -890,14 +916,6 @@
     z-index: 60;
     width: min(100% - 24px, 1180px);
     transform: translateX(-50%);
-    transition:
-      transform 0.4s var(--ease),
-      opacity 0.3s var(--ease);
-  }
-
-  .nav[data-hidden="true"] {
-    transform: translate(-50%, calc(-100% - 20px));
-    opacity: 0;
   }
 
   .nav__bar {

@@ -136,6 +136,14 @@ export default function HeroVideo() {
     /* O `canplay` cobre o caso de o efeito correr antes de haver dados:
        aí o primeiro play() falha por razões que não são de política. */
     video.addEventListener("canplay", sync);
+    /* O atributo `loop` sozinho não chega: se o iOS suspender o elemento
+       perto do fim, o vídeo acaba e fica no último frame em vez de dar a
+       volta. Aqui recomeça-se à mão. */
+    const recomecar = () => {
+      video.currentTime = 0;
+      void video.play().catch(() => {});
+    };
+    video.addEventListener("ended", recomecar);
     document.addEventListener("visibilitychange", sync);
     reducedMotion.addEventListener("change", onChange);
     reducedData.addEventListener("change", onChange);
@@ -144,6 +152,7 @@ export default function HeroVideo() {
     return () => {
       observador.disconnect();
       video.removeEventListener("canplay", sync);
+      video.removeEventListener("ended", recomecar);
       document.removeEventListener("visibilitychange", sync);
       reducedMotion.removeEventListener("change", onChange);
       reducedData.removeEventListener("change", onChange);
@@ -177,6 +186,7 @@ export default function HeroVideo() {
         <source src={FULL_SRC} type="video/mp4" />
       </video>
       <div className="hero__veil" aria-hidden="true" />
+      <div className="hero__blend" aria-hidden="true" />
     </>
   );
 }

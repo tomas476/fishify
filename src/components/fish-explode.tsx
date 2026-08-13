@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { asset } from "@/lib/asset";
 
@@ -43,17 +43,6 @@ function src(i: number) {
   return asset(`/frames/fish-${String(i + 1).padStart(3, "0")}.webp`);
 }
 
-/** Legendas ancoradas ao progresso: dão sentido ao movimento. */
-const CAPTIONS = [
-  { until: 0.22, text: "Inteiro, como saiu da lota de Peniche." },
-  { until: 0.72, text: "Escamado e amanhado por quem faz isto há gerações." },
-  { until: 1.01, text: "Em posta ou em filete, como o quiser à mesa." },
-] as const;
-
-function captionFor(p: number) {
-  return (CAPTIONS.find((c) => p < c.until) ?? CAPTIONS[CAPTIONS.length - 1]).text;
-}
-
 type Props = {
   /** O elemento cuja travessia do ecrã conduz a animação. Por omissão, a própria secção. */
   className?: string;
@@ -62,7 +51,6 @@ type Props = {
 export default function FishExplode({ className }: Props) {
   const wrap = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLImageElement>(null);
-  const [caption, setCaption] = useState<string>(CAPTIONS[0].text);
   const still = useReducedMotion();
 
   useEffect(() => {
@@ -117,7 +105,6 @@ export default function FishExplode({ className }: Props) {
       queued = false;
       const p = progress();
       paint(Math.round(p * (FRAMES - 1)));
-      setCaption(captionFor(p));
     };
 
     const onScroll = () => {
@@ -131,13 +118,8 @@ export default function FishExplode({ className }: Props) {
          setState síncrono lá dentro. */
       images[FRAMES - 1] = new Image();
       paint(FRAMES - 1);
-      const t = window.setTimeout(
-        () => setCaption(CAPTIONS[CAPTIONS.length - 1].text),
-        0
-      );
       return () => {
         alive = false;
-        window.clearTimeout(t);
       };
     }
 
@@ -194,7 +176,6 @@ export default function FishExplode({ className }: Props) {
         alt="Uma dourada inteira que se separa em postas à medida que a página desce"
         decoding="async"
       />
-      <p className="fish__caption">{caption}</p>
     </div>
   );
 }

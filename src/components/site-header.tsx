@@ -13,9 +13,13 @@ import Logo from "@/components/logo";
    de fazer seja o que for. Assim, mesmo sem JavaScript nenhum, tocar num
    item salta para a secção certa.
 
-   Dois estados, tratados pelo CSS a partir de dois atributos:
+   UM estado, tratado pelo CSS a partir de um atributo:
    • data-solid: a cápsula ganha corpo branco assim que a página sai do topo
-   • data-hidden: esconde-se ao descer, reaparece ao subir
+
+   A navbar NÃO se esconde ao descer. Escondia-se, e foi mandado abaixo:
+   num site de uma página só, em que o menu é a única forma de saltar
+   entre secções, tirá-lo do ecrã a meio da leitura obriga a subir para o
+   ir buscar.
 
    O painel do menu está SEMPRE no DOM e é o atributo `data-aberto` que o
    mostra. Montá-lo e desmontá-lo fazia o primeiro toque perder-se em iOS,
@@ -24,28 +28,20 @@ import Logo from "@/components/logo";
 
 export default function SiteHeader() {
   const [solid, setSolid] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    let last = window.scrollY;
-
-    const onScroll = () => {
-      const y = window.scrollY;
-      setSolid(y > 40);
-      setHidden(y > 220 && y > last && !open);
-      last = y;
-    };
+    const onScroll = () => setSolid(window.scrollY > 40);
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
+  }, []);
 
   const fechar = () => setOpen(false);
 
   return (
-    <header className="nav" data-solid={solid} data-hidden={hidden}>
+    <header className="nav" data-solid={solid}>
       <div className="nav__bar">
         <a href="#topo" aria-label={`${BRAND.name}, ir para o início`}>
           <Logo className="nav__logo" />

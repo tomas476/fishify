@@ -65,14 +65,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- A DOURADA, EM FAIXA ----------
-          Separa o "quem somos" dos passos. Deitada, pequena, e a separar-se
-          conforme o scroll. Substituiu a secção dos três pilares, que o
-          cliente mandou abaixo. */}
-      <FishExplode className="peixe-faixa" />
-
       {/* ---------- COMO FUNCIONA ---------- */}
-      <section className="section">
+      <section className="section" id="como-funciona">
         <div className="shell">
           <p className="kicker" data-reveal>
             Como funciona
@@ -83,7 +77,15 @@ export default function Home() {
           >
             Três passos, e o peixe está à porta.
           </h2>
-          <Passos className="mt-14" />
+
+          {/* O peixe deixou a faixa horizontal e passou a ficar EM PÉ à
+              direita dos passos, nos dois tamanhos de ecrã. Separa-se
+              enquanto a secção atravessa o ecrã e já não leva legenda: o
+              que se lê ao lado é a sequência dos passos. */}
+          <div className="passos-com-peixe mt-14">
+            <Passos />
+            <FishExplode className="passos__peixe" />
+          </div>
         </div>
       </section>
 
