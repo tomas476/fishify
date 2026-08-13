@@ -1,10 +1,11 @@
 import Entregas from "@/components/entregas";
 import Faq from "@/components/faq";
-import FishExplode from "@/components/fish-explode";
+import Image from "next/image";
+import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
 import Passos from "@/components/passos";
 import ReelsFan from "@/components/reels-fan";
-import { BRAND, HOURS, PILLARS, STORY, WA_MESSAGES, wa } from "@/content/site";
+import { BRAND, HOURS, PILLARS, WA_MESSAGES, wa } from "@/content/site";
 
 /* =========================================================================
    A LANDING, E É SÓ ISTO
@@ -42,24 +43,21 @@ export default function Home() {
       <section className="section" id="quem-somos">
         <div className="shell">
           <div className="sobre">
-            <FishExplode className="sobre__peixe" />
+            {/* O peixe saiu daqui por decisão do cliente, à espera de sítio
+                novo. Ficou a fotografia dos dois à frente da carrinha, que
+                é o que a secção tinha por dizer e não dizia. */}
+            <figure className="sobre__foto" data-reveal="escala">
+              <Image
+                src="/img/carrinha.webp"
+                alt="O Rui e a Beatriz à frente da carrinha da Fishify, no porto de Peniche"
+                width={1100}
+                height={733}
+                sizes="(max-width: 900px) 100vw, 44vw"
+                className="sobre__img"
+              />
+            </figure>
 
-            <div>
-              <p className="kicker" data-reveal>
-                {STORY.kicker}
-              </p>
-              <h2 className="display display--lg mt-4" data-reveal="palavras">
-                {STORY.title}
-              </h2>
-              <div className="prose mt-7" data-reveal="cascata">
-                {STORY.paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-              </div>
-              <p className="display display--md mt-8" data-reveal>
-                {STORY.closing}
-              </p>
-            </div>
+            <Historia />
           </div>
         </div>
       </section>

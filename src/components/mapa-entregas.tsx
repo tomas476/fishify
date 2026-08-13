@@ -208,9 +208,33 @@ export default function MapaEntregas({ onSelect, className }: Props) {
                 strokeOpacity={viva ? 0.9 : 0.35}
                 strokeLinecap="round"
                 style={{ transition: "stroke-width 0.2s, stroke-opacity 0.2s" }}
+                /* A ROTA ANDA EM CICLO enquanto o mapa está à vista: a
+                   linha nasce em Peniche, corre até à zona, apaga-se e
+                   volta a nascer. É o que dá a ideia de a carrinha estar
+                   sempre a sair de lá para todo o lado.
+
+                   `pathLength` de 0 a 1 e outra vez a 0, com `times` a
+                   segurar a linha desenhada durante metade do ciclo, e um
+                   `repeatDelay` escalonado por zona para as cinco não
+                   piscarem todas ao mesmo tempo. */
                 initial={{ pathLength: 0 }}
-                animate={entra ? { pathLength: 1 } : { pathLength: 0 }}
-                transition={{ duration: d(0.5), delay: d(T_ROTAS + i * PASSO) }}
+                animate={
+                  entra
+                    ? { pathLength: [0, 1, 1, 0] }
+                    : { pathLength: 0 }
+                }
+                transition={
+                  parado
+                    ? { duration: 0 }
+                    : {
+                        duration: 3.4,
+                        times: [0, 0.32, 0.72, 1],
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatDelay: 0.4,
+                        delay: d(T_ROTAS + i * PASSO),
+                      }
+                }
               />
             );
           })}

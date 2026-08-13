@@ -94,16 +94,44 @@ export const PILLARS = [
   },
 ] as const;
 
-/** Texto do Rui e da Beatriz, na voz deles. */
+/* Texto do Rui e da Beatriz, na voz deles.
+
+   Cada parágrafo diz QUEM está a falar, e é isso que põe a fotografia
+   redonda no canto do cartão: o Rui na parte dele, a Beatriz na dela, e os
+   dois lado a lado quando falam em conjunto. As fotografias são as que o
+   cliente mandou, recortadas por dentro do círculo original para não
+   trazerem o anel escuro da captura. */
+export type Voz = "rui" | "beatriz" | "ambos" | null;
+
+export const RETRATOS = {
+  rui: { src: "/img/rui.webp", alt: "Rui, da Fishify" },
+  beatriz: { src: "/img/beatriz.webp", alt: "Beatriz, da Fishify" },
+} as const;
+
 export const STORY = {
   kicker: "Quem somos",
   title: "Antes de sermos a Fishify, somos duas pessoas que nasceram do mar",
   paragraphs: [
-    "Duas famílias inteiras ligadas ao peixe, há gerações.",
-    "Eu sou o Rui. Cresci no meio dos mercados a ver os meus pais trabalhar. Venho de uma família de pescadores e peixeiros desde os bisavós, e sempre ouvi dizer que o mar nos corre nas veias.",
-    "Eu sou a Beatriz. Cresci na Praia da Vieira, numa família de mulheres fortes. A minha avó e a minha bisavó eram peixeiras. Aprendi a arte desde pequena.",
-    "Conhecemo-nos em 2016, na faculdade em Leiria. Ficámos na mesma turma e o destino tratou de nos aproximar. A Fishify surgiu como trabalho final de curso. A ideia era simples: levar o melhor peixe de Peniche diretamente às pessoas.",
-    "Hoje somos o Rui e a Beatriz, pessoas de família, humildes e trabalhadoras, que continuam uma tradição de gerações.",
+    {
+      voz: null as Voz,
+      text: "Duas famílias inteiras ligadas ao peixe, há gerações.",
+    },
+    {
+      voz: "rui" as Voz,
+      text: "Eu sou o Rui. Cresci no meio dos mercados a ver os meus pais trabalhar. Venho de uma família de pescadores e peixeiros desde os bisavós, e sempre ouvi dizer que o mar nos corre nas veias.",
+    },
+    {
+      voz: "beatriz" as Voz,
+      text: "Eu sou a Beatriz. Cresci na Praia da Vieira, numa família de mulheres fortes. A minha avó e a minha bisavó eram peixeiras. Aprendi a arte desde pequena.",
+    },
+    {
+      voz: "ambos" as Voz,
+      text: "Conhecemo-nos em 2016, na faculdade em Leiria. Ficámos na mesma turma e o destino tratou de nos aproximar. A Fishify surgiu como trabalho final de curso. A ideia era simples: levar o melhor peixe de Peniche diretamente às pessoas.",
+    },
+    {
+      voz: "ambos" as Voz,
+      text: "Hoje somos o Rui e a Beatriz, pessoas de família, humildes e trabalhadoras, que continuam uma tradição de gerações.",
+    },
   ],
   closing: "Fishify, a frescura do mar de Peniche, à sua mesa.",
 } as const;

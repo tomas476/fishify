@@ -104,16 +104,35 @@ function Seta({ eixo, espelhada = false, atraso, className }: SetaProps) {
       aria-hidden="true"
       className={`text-[var(--color-accent)] ${espelhada ? "-scale-x-100" : ""} ${className ?? ""}`}
     >
+      {/* AS SETAS DESENHAM-SE EM CICLO enquanto estão à vista: o traço
+          nasce, fica um bocado inteiro, apaga-se e volta a nascer. O
+          `times` é o que segura a seta desenhada durante metade do ciclo,
+          senão isto lia-se como um pisca-pisca em vez de um desenho.
+
+          O `repeat` só existe depois de a seta ter entrado a primeira vez
+          (é o `desenhar`), para o ciclo não começar a meio com a página
+          ainda longe da secção. */}
       <motion.path
         d={curva.traco}
         stroke="currentColor"
         strokeWidth={curva.espessura}
         strokeLinecap="round"
         initial={{ pathLength: 0 }}
-        animate={{ pathLength: desenhar ? 1 : 0 }}
-        transition={{ duration: tracoDur, delay: reduzido ? 0 : atraso, ease: EASE }}
+        animate={{ pathLength: desenhar ? [0, 1, 1, 0] : 0 }}
+        transition={
+          reduzido
+            ? { duration: 0 }
+            : {
+                duration: tracoDur + 2.2,
+                times: [0, tracoDur / (tracoDur + 2.2), 0.82, 1],
+                ease: EASE,
+                delay: atraso,
+                repeat: Infinity,
+                repeatDelay: 0.5,
+              }
+        }
       />
-      {/* A ponta só aparece quando o traço já lá chegou. */}
+      {/* A ponta só aparece quando o traço já lá chegou, e apaga-se com ele. */}
       <motion.path
         d={curva.ponta}
         stroke="currentColor"
@@ -121,12 +140,19 @@ function Seta({ eixo, espelhada = false, atraso, className }: SetaProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
         initial={{ pathLength: 0 }}
-        animate={{ pathLength: desenhar ? 1 : 0 }}
-        transition={{
-          duration: reduzido ? 0 : 0.3,
-          delay: reduzido ? 0 : atraso + tracoDur * 0.82,
-          ease: "easeOut",
-        }}
+        animate={{ pathLength: desenhar ? [0, 0, 1, 1, 0] : 0 }}
+        transition={
+          reduzido
+            ? { duration: 0 }
+            : {
+                duration: tracoDur + 2.2,
+                times: [0, 0.62, 0.76, 0.86, 1],
+                ease: "easeOut",
+                delay: atraso,
+                repeat: Infinity,
+                repeatDelay: 0.5,
+              }
+        }
       />
     </svg>
   );

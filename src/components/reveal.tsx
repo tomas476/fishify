@@ -18,6 +18,15 @@ import { useEffect } from "react";
    que o CSS usa para escalonar. Feito aqui e não no servidor porque o
    estado escondido só pode existir se o JS estiver vivo.
 
+   AS ENTRADAS ANDAM PARA TRÁS. Quando um elemento sai do ecrã a marca é
+   retirada, e por isso ao subir a página as animações desfazem-se pela
+   mesma ordem por que se fizeram. Foi um pedido explícito depois da
+   primeira versão, que só animava à descida e nunca mais repetia.
+
+   Isto obriga a NÃO deixar de observar depois da primeira entrada, e é a
+   diferença que faz um `.reveal` custar um pouco mais: cada elemento fica
+   observado durante a vida da página.
+
    `threshold: 0` e mais nada. Um rootMargin negativo já partiu o fim de
    uma página noutro projecto: as últimas secções nunca chegavam a cruzar
    a caixa encolhida e ficavam invisíveis para sempre.
@@ -80,10 +89,9 @@ export default function Reveal() {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
           const el = entry.target as HTMLElement;
-          el.classList.add(el.dataset.reveal !== undefined ? "dentro" : "is-in");
-          observer.unobserve(el);
+          const marca = el.dataset.reveal !== undefined ? "dentro" : "is-in";
+          el.classList.toggle(marca, entry.isIntersecting);
         }
       },
       { threshold: 0 }
@@ -92,12 +100,7 @@ export default function Reveal() {
     const varrer = () => {
       const frescos = Array.from(
         document.querySelectorAll<HTMLElement>(".reveal, [data-reveal]")
-      ).filter(
-        (el) =>
-          !el.dataset.revealBound &&
-          !el.classList.contains("is-in") &&
-          !el.classList.contains("dentro")
-      );
+      ).filter((el) => !el.dataset.revealBound);
 
       if (frescos.length === 0) return;
 
@@ -135,9 +138,7 @@ export default function Reveal() {
       // elementos que sobrevivem à mudança de rota sem terem chegado a entrar
       // têm de poder ser re-observados pelo próximo efeito
       document
-        .querySelectorAll<HTMLElement>(
-          ".reveal:not(.is-in), [data-reveal]:not(.dentro)"
-        )
+        .querySelectorAll<HTMLElement>(".reveal, [data-reveal]")
         .forEach((el) => delete el.dataset.revealBound);
     };
   }, [pathname]);

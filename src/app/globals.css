@@ -441,6 +441,15 @@
     filter: none;
   }
 
+  /* escala: blocos com moldura, como o cartão da história */
+  .js-reveal [data-reveal="escala"] {
+    opacity: 0;
+    transform: translateY(26px) scale(0.96);
+    transition:
+      opacity 0.7s var(--ease),
+      transform 0.85s var(--ease);
+  }
+
   /* destaque: reservado aos títulos de secção */
   .js-reveal [data-reveal="destaque"] {
     opacity: 0;
@@ -597,65 +606,76 @@
   }
 
   /* =========================================================================
-     SOBRE NÓS: a dourada à esquerda, o texto deles à direita
-
-     O palco JÁ NÃO É `sticky` e NÃO prende o scroll. A separação acontece
-     enquanto a secção atravessa o ecrã, e quem desce nunca sente a página
-     a agarrá-lo. Foi um pedido explícito depois da primeira versão.
+     SOBRE NÓS: a fotografia deles e o cartão com o texto
      ========================================================================= */
 
   .sobre {
     display: grid;
-    gap: clamp(24px, 6vw, 56px);
-    align-items: center;
+    gap: clamp(24px, 6vw, 48px);
+    align-items: start;
   }
 
   @media (min-width: 900px) {
     .sobre {
-      /* o peixe é estreito e alto: a coluna dele não precisa de metade */
-      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
-      gap: clamp(40px, 6vw, 88px);
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      gap: clamp(32px, 5vw, 64px);
     }
   }
 
-  .sobre__peixe {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
+  .sobre__foto {
+    margin: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(11, 32, 53, 0.16);
   }
 
-  /* `sticky` SÓ com duas colunas. Numa coluna só, um item de grelha
-     pegajoso não fica preso à sua linha: o browser prende-o ao contentor
-     inteiro, e o peixe descia por cima do texto todo. */
   @media (min-width: 900px) {
-    .sobre__peixe {
+    .sobre__foto {
       position: sticky;
       top: 104px;
-      align-self: start;
     }
   }
 
-  .fish__frame {
-    width: min(46vw, 190px);
+  .sobre__img {
+    width: 100%;
     height: auto;
-    aspect-ratio: 390 / 980;
-    object-fit: contain;
   }
 
-  @media (min-width: 900px) {
-    .fish__frame {
-      width: min(26vw, 300px);
+  /* ---------- o cartão do texto ---------- */
+
+  .historia__p {
+    position: relative;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  /* Os retratos entram no canto superior esquerdo do parágrafo e o texto
+     escoa-se à volta deles. `float` e não posicionamento absoluto: é a
+     única forma de as primeiras linhas se encostarem à fotografia sem lhe
+     passarem por cima nem deixarem um buraco por baixo. */
+  .historia__retratos {
+    float: left;
+    display: flex;
+    gap: 4px;
+    margin: 2px 12px 4px 0;
+  }
+
+  .historia__retrato {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 2px var(--paper);
+  }
+
+  .historia__retratos .historia__retrato + .historia__retrato {
+    margin-left: -14px; /* os dois juntos, sobrepostos, como um par */
+  }
+
+  @media (min-width: 640px) {
+    .historia__retrato {
+      width: 46px;
+      height: 46px;
     }
-  }
-
-  .fish__caption {
-    max-width: 26ch;
-    text-align: center;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--ink-3);
-    transition: opacity 0.35s var(--ease);
   }
 
   /* =========================================================================
