@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BRAND, NAV, WA_MESSAGES, wa } from "@/content/site";
 import Logo from "@/components/logo";
+import { asset } from "@/lib/asset";
 
 /* =========================================================================
    NAVBAR EM CÁPSULA FLUTUANTE
@@ -12,6 +13,11 @@ import Logo from "@/components/logo";
    de navegar de todo; um `<a>` continua a levar ao sítio certo mesmo sem
    JavaScript nenhum, que é a rede de segurança que este site já precisou
    de ter uma vez.
+
+   Em troca, os `<a>` NÃO recebem o prefixo da subpasta que o `next/link`
+   acrescenta sozinho. Por isso passam todos pelo `asset()`: sem isso, na
+   pré-visualização o logótipo mandava para a raiz do domínio, que é outro
+   site, e devolvia 404. O menu inteiro tinha o mesmo defeito.
 
    UM estado, tratado pelo CSS a partir de um atributo:
    • data-solid: a cápsula ganha corpo branco assim que a página sai do topo
@@ -43,12 +49,8 @@ export default function SiteHeader() {
   return (
     <header className="nav" data-solid={solid}>
       <div className="nav__bar">
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages --
-            um <a> a sério e não next/link: se a hidratação falhar num
-            telemóvel, o next/link deixa de navegar e o site fica preso.
-            Já aconteceu neste projecto. */}
         <a
-          href="/#topo"
+          href={asset("/#topo")}
           className="nav__vidro"
           aria-label={`${BRAND.name}, ir para o início`}
         >
@@ -57,7 +59,7 @@ export default function SiteHeader() {
 
         <nav className="nav__links" aria-label="Principal">
           {NAV.map((item) => (
-            <a key={item.href} href={item.href} className="nav__link">
+            <a key={item.href} href={asset(item.href)} className="nav__link">
               {item.label}
             </a>
           ))}
@@ -110,7 +112,7 @@ export default function SiteHeader() {
 
       <div className="nav__panel" id="menu-principal" data-aberto={open}>
         {NAV.map((item) => (
-          <a key={item.href} href={item.href} onClick={fechar}>
+          <a key={item.href} href={asset(item.href)} onClick={fechar}>
             {item.label}
           </a>
         ))}

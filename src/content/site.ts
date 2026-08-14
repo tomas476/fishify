@@ -200,9 +200,9 @@ export const FAQS = [
    alguém procura quando já decidiu comprar, e a landing só as apresenta. */
 export const NAV = [
   { href: "/#quem-somos", label: "Quem somos" },
-  { href: "/entregas", label: "Entregas" },
+  { href: "/entregas/", label: "Entregas" },
   { href: "/#reels", label: "Instagram" },
-  { href: "/encomendar", label: "Encomendar" },
+  { href: "/encomendar/", label: "Encomendar" },
 ] as const;
 
 /** Abre uma conversa de WhatsApp já escrita. Sem backend, como sempre. */
