@@ -1224,6 +1224,70 @@
   }
 
   /* =========================================================================
+     OS NOMES DAS ZONAS A BOIAR
+
+     Deixaram de ser pílulas e passaram a tipografia grande: são a segunda
+     coisa mais importante da página das entregas, a seguir ao mapa, e uma
+     fila de balões pequenos não dizia isso.
+
+     A ondulação é UMA animação só, com o atraso negativo a variar por
+     item: cada nome entra no ciclo num ponto diferente e o conjunto lê-se
+     como uma linha de água em vez de cinco coisas a saltar ao mesmo tempo.
+     ========================================================================= */
+
+  @keyframes ondular {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-9px) rotate(-0.6deg);
+    }
+  }
+
+  .zonas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: clamp(14px, 4vw, 34px);
+  }
+
+  .zonas__nome {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 7vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    background: none;
+    border: 0;
+    padding: 4px 0;
+    cursor: pointer;
+    transition: color 0.25s var(--ease);
+    animation: ondular 4.6s ease-in-out infinite;
+    /* atraso NEGATIVO: cada nome arranca já a meio do ciclo, em vez de
+       ficar quieto à espera da vez */
+    animation-delay: calc(var(--i) * -0.72s);
+  }
+
+  .zonas__nome:hover,
+  .zonas__nome[data-viva="true"] {
+    color: var(--accent-deep);
+  }
+
+  .zonas__nome[aria-pressed="true"] {
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    text-decoration-thickness: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zonas__nome {
+      animation: none;
+    }
+  }
+
+  /* =========================================================================
      HORÁRIO
      ========================================================================= */
 

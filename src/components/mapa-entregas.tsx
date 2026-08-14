@@ -399,25 +399,21 @@ export default function MapaEntregas({
             detalhe também sai: na landing o mapa passa a ilustração e a
             informação vive toda em /entregas. */}
         {lista && (
-        <ul className="flex flex-wrap gap-2">
-          {ZONES.map((zona) => {
+        <ul className="zonas">
+          {ZONES.map((zona, i) => {
             const viva = activa === zona.name;
             return (
-              <li key={zona.name}>
+              <li key={zona.name} style={{ "--i": i } as React.CSSProperties}>
                 <button
                   type="button"
+                  className="zonas__nome"
+                  data-viva={viva}
                   aria-pressed={escolhida === zona.name}
                   onClick={() => escolher(zona.name)}
                   onPointerEnter={() => setSobre(zona.name)}
                   onPointerLeave={() => setSobre(null)}
                   onFocus={() => setSobre(zona.name)}
                   onBlur={() => setSobre(null)}
-                  className={[
-                    "inline-flex min-h-[44px] items-center rounded-full border px-4 text-[0.95rem] transition-colors",
-                    viva
-                      ? "border-transparent bg-[var(--color-accent-deep)] text-[var(--color-on-accent)]"
-                      : "border-[var(--hair)] bg-[var(--color-paper)] text-[var(--color-ink)]",
-                  ].join(" ")}
                 >
                   {zona.name}
                 </button>

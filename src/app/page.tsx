@@ -35,7 +35,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Encomendar pelo WhatsApp
+              Encomendar
             </a>
             <a className="hero__secundaria" href="#entregas">
               Ver onde entregamos
