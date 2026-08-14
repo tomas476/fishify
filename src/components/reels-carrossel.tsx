@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import { REELS } from "@/content/site";
 import { asset } from "@/lib/asset";
@@ -54,12 +60,42 @@ function posicaoDe(dist: number): Pos {
 /** Arrasto mínimo, em pixéis, para passar de cartão. */
 const LIMIAR = 50;
 
+const LARGO = "(min-width: 768px)";
+
+function subscribeLargo(onChange: () => void) {
+  const mq = window.matchMedia(LARGO);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+/**
+ * Quantos cartões de cada lado do foco chegam a existir no DOM.
+ *
+ * Em ecrã estreito só três cartões: o do meio e um de cada lado. Os de
+ * distância 2 ficavam minúsculos, desfocados e encavalitados nos vizinhos,
+ * e num telemóvel isso lê-se como sujidade, não como profundidade. Em
+ * ecrã largo há espaço para a fuga completa, e ficam os cinco.
+ *
+ * `useSyncExternalStore` e não `useState` dentro de um efeito, pela mesma
+ * razão que em `use-reduced-motion`. No servidor devolve o caso do
+ * telemóvel, para o HTML sair igual para toda a gente e o desktop só
+ * acrescentar cartões depois de hidratar.
+ */
+function useLimiteVisivel() {
+  return useSyncExternalStore(
+    subscribeLargo,
+    () => (window.matchMedia(LARGO).matches ? 3 : 1),
+    () => 1
+  );
+}
+
 export default function ReelsCarrossel() {
   const total = REELS.length;
   const [foco, setFoco] = useState(0);
   const [comSom, setComSom] = useState(false);
   const [noEcra, setNoEcra] = useState(false);
   const reduzido = useReducedMotion();
+  const limite = useLimiteVisivel();
 
   const palcoRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -160,7 +196,7 @@ export default function ReelsCarrossel() {
       >
         {REELS.map((reel, i) => {
           const d = distancia(i);
-          if (Math.abs(d) > 3) return null;
+          if (Math.abs(d) > limite) return null;
           const p = posicaoDe(d);
           const ativo = d === 0;
 

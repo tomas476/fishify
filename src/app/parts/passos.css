@@ -1,0 +1,55 @@
+/* =========================================================================
+   passos
+
+   Ficheiro de PARTE. Carregado no `layout.tsx` DEPOIS do `globals.css`,
+   e por isso ganha a ele em igualdade de especificidade. Existe para que
+   trabalhos em paralelo não colidam todos no mesmo ficheiro.
+
+   Regra: tudo dentro de `@layer components`, como no globals. Camadas
+   nativas juntam-se entre ficheiros, portanto isto entra na mesma camada
+   e as utilitárias do Tailwind continuam a ter a última palavra.
+   ========================================================================= */
+
+@layer components {
+  /* Os três passos passaram a ficar em coluna também em desktop, portanto a
+     coluna de texto deixou de precisar de metade da largura: encolhe até um
+     bloco confortável de ler e o peixe fica com o resto. As proporções são
+     as do globals reescritas aqui, porque o globals não se toca. */
+  @media (min-width: 900px) {
+    .passos-com-peixe {
+      grid-template-columns: minmax(0, 1fr) clamp(300px, 27vw, 390px);
+      gap: clamp(32px, 5vw, 80px);
+    }
+
+    /* O frame é 390x980, quase três vezes mais alto do que largo: a largura
+       fica presa à coluna, senão um peixe mais largo passava a ser mais
+       alto do que o ecrã inteiro. */
+    .fish__frame {
+      max-width: 100%;
+    }
+  }
+}
+
+@layer components {
+  /* O peixe passou a mandar na altura da secção: com 977 px de altura,
+     sobravam uns 400 px de vazio à esquerda por baixo do passo 3. Agora a
+     coluna dele estica-se à linha da grelha e a imagem cabe DENTRO dessa
+     altura em vez de a definir. Quem manda passa a ser a altura dos três
+     passos, que é o conteúdo. */
+  @media (min-width: 900px) {
+    .passos-com-peixe {
+      align-items: stretch;
+    }
+
+    .passos__peixe {
+      align-items: center;
+    }
+
+    .passos__peixe .fish__frame {
+      width: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+}

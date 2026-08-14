@@ -1,9 +1,8 @@
 import Entregas from "@/components/entregas";
 import Faq from "@/components/faq";
-import Image from "next/image";
 import Link from "next/link";
-import { asset } from "@/lib/asset";
 import FishExplode from "@/components/fish-explode";
+import FotoRasgada from "@/components/foto-rasgada";
 import Historia from "@/components/historia";
 import HeroVideo from "@/components/hero-video";
 import Horario from "@/components/horario";
@@ -44,26 +43,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- QUEM SOMOS ---------- */}
-      <section className="section" id="quem-somos">
-        <div className="shell">
-          <div className="sobre">
-            {/* O peixe saiu daqui por decisão do cliente, à espera de sítio
-                novo. Ficou a fotografia dos dois à frente da carrinha, que
-                é o que a secção tinha por dizer e não dizia. */}
-            <figure className="sobre__foto" data-reveal="escala">
-              <Image
-                src={asset("/img/carrinha.webp")}
-                alt="O Rui e a Beatriz à frente da carrinha da Fishify, no porto de Peniche"
-                width={1100}
-                height={733}
-                sizes="(max-width: 900px) 100vw, 44vw"
-                className="sobre__img"
-              />
-            </figure>
+      {/* ---------- QUEM SOMOS ----------
+          Segue o desenho do cliente: a fotografia grande nasce do hero e
+          acaba num rasgão de papel, e o título começa logo a seguir ao
+          rasgão, encostado à esquerda. A antiga grelha de duas colunas,
+          com a foto de um lado e o texto do outro, deixou de existir. */}
+      <section className="section--tight pt-0" id="quem-somos">
+        <FotoRasgada />
 
-            <Historia />
-          </div>
+        <div className="shell mt-[clamp(28px,6vw,56px)]">
+          <Historia />
         </div>
       </section>
 
@@ -140,7 +129,7 @@ export default function Home() {
           <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-start">
             <div>
               <h2 className="display display--lg max-w-[16ch]" data-reveal="palavras">
-                Quer peixe fresco em casa esta semana?
+                Precisa de peixe esta semana?
               </h2>
               <p className="lede mt-5 max-w-[46ch]" data-reveal>
                 Diga-nos quem é, onde quer receber e o que procura.

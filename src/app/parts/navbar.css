@@ -1,0 +1,145 @@
+/* =========================================================================
+   navbar
+
+   Ficheiro de PARTE. Carregado no `layout.tsx` DEPOIS do `globals.css`,
+   e por isso ganha a ele em igualdade de especificidade. Existe para que
+   trabalhos em paralelo não colidam todos no mesmo ficheiro.
+
+   Regra: tudo dentro de `@layer components`, como no globals. Camadas
+   nativas juntam-se entre ficheiros, portanto isto entra na mesma camada
+   e as utilitárias do Tailwind continuam a ter a última palavra.
+   ========================================================================= */
+
+@layer components {
+  /* =========================================================================
+     A CÁPSULA INTEIRA EM VIDRO, E O LOGÓTIPO SEMPRE AZUL
+
+     Antes só o logótipo tinha lente e a cápsula ganhava corpo ao rolar.
+     Agora a cápsula é vidro desde o primeiro pixel, e a lente interior
+     saiu: vidro dentro de vidro lê-se como uma mancha, não como duas
+     camadas.
+
+     A OPACIDADE NÃO É GOSTO, É MEDIDA. Por trás da cápsula passa o vídeo
+     do hero, e cada frame traz outro fundo: escondeu-se a tinta, parou-se
+     o vídeo aos 3, 9, 16 e 23 segundos e amostraram-se os pixeis do vidro.
+     Fundo cru por baixo: entre rgb(11 30 47) e rgb(61 76 92).
+
+     Com o corpo em 0,93 a 0,87 de branco, o pixel mais escuro do vidro dá
+     5,16:1 para o azul da marca (--accent-deep) e 6,16:1 para a tinta dos
+     links. Em 0,80 na base caía para 4,47:1, abaixo do mínimo: por isso a
+     base não desce daqui.
+
+     A mesma opacidade fica nos dois estados. Ao rolar, o que passa por
+     baixo nem sempre é papel claro, e sobre uma chapa `--deep` o vidro
+     mais leve deixava de dar os 4,5:1. Medido contra `--deep` e contra
+     preto puro, este dá 5,16:1 e 5,00:1.
+     ========================================================================= */
+
+  .nav {
+    /* O branco da luz entra em seis sítios: corpo, arestas, luz interior
+       e a versão opaca do telemóvel. Fica num sítio só. */
+    --nav-luz: 255 255 255;
+    --nav-corpo-topo: rgb(var(--nav-luz) / 0.93);
+    --nav-corpo-base: rgb(var(--nav-luz) / 0.87);
+  }
+
+  /* O `data-solid` entra no seletor para bater a regra do globals que só
+     dava corpo à cápsula depois de a página rolar. */
+  .nav .nav__bar,
+  .nav[data-solid="true"] .nav__bar {
+    background: linear-gradient(
+      180deg,
+      var(--nav-corpo-topo) 0%,
+      var(--nav-corpo-base) 100%
+    );
+    /* a saturação é o que faz isto parecer vidro grosso e não um véu
+       branco: a cor do que passa por baixo continua a ler-se */
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    backdrop-filter: blur(20px) saturate(1.8);
+    /* aresta clara, mais forte em cima do que em baixo, como se a luz
+       caísse de cima */
+    border-color: rgb(var(--nav-luz) / 0.34);
+    border-top-color: rgb(var(--nav-luz) / 0.82);
+    box-shadow:
+      inset 0 1px 0 rgb(var(--nav-luz) / 0.9),
+      inset 0 -1px 0 color-mix(in srgb, var(--deep) 8%, transparent),
+      0 10px 26px color-mix(in srgb, var(--deep) 20%, transparent);
+  }
+
+  /* Ao rolar, o fundo por baixo já é claro: a sombra fecha-se um pouco
+     para a cápsula não parecer a flutuar mais alto do que está. */
+  .nav[data-solid="true"] .nav__bar {
+    box-shadow:
+      inset 0 1px 0 rgb(var(--nav-luz) / 0.9),
+      inset 0 -1px 0 color-mix(in srgb, var(--deep) 8%, transparent),
+      0 8px 20px color-mix(in srgb, var(--deep) 13%, transparent);
+  }
+
+  /* A lente do logótipo desaparece: o vidro é agora a cápsula toda. Fica
+     só o alvo de toque, que sem o `padding` caía para os 22px do desenho. */
+  .nav .nav__vidro,
+  .nav[data-solid="true"] .nav__vidro {
+    padding: 11px 0;
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .nav .nav__logo,
+  .nav[data-solid="true"] .nav__logo {
+    /* `--accent` é cor de superfície e dava 3,1:1 aqui; a tinta é a funda */
+    color: var(--accent-deep);
+  }
+
+  .nav .nav__link,
+  .nav[data-solid="true"] .nav__link {
+    color: var(--ink-2);
+  }
+
+  .nav .nav__link:hover,
+  .nav[data-solid="true"] .nav__link:hover {
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+  }
+
+  .nav .nav__link[aria-current="page"],
+  .nav[data-solid="true"] .nav__link[aria-current="page"] {
+    color: var(--accent-deep);
+  }
+
+  .nav .nav__toggle,
+  .nav[data-solid="true"] .nav__toggle {
+    color: var(--ink);
+    border-color: var(--hair);
+    background: transparent;
+  }
+
+  /* =========================================================================
+     REGRA DO KIT: ABAIXO DOS 880px O DESFOQUE SAI
+
+     O `backdrop-filter` custa GPU no telemóvel e, numa barra estreita
+     onde o vídeo passa inteiro por trás, come legibilidade. Sai o
+     desfoque e o fundo passa a opaco, com as mesmas cores e as
+     opacidades subidas ao máximo. Substitui as regras equivalentes do
+     globals para o `.nav__bar` e para o `.nav__vidro`.
+     ========================================================================= */
+  @media (max-width: 899px) {
+    .nav .nav__bar,
+    .nav[data-solid="true"] .nav__bar {
+      --nav-corpo-topo: rgb(var(--nav-luz) / 1);
+      --nav-corpo-base: var(--paper);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      border-color: var(--hair);
+      border-top-color: rgb(var(--nav-luz) / 0.9);
+    }
+
+    .nav .nav__panel {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      background: var(--paper);
+    }
+  }
+}

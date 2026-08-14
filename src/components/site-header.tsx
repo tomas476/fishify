@@ -58,7 +58,12 @@ export default function SiteHeader() {
         </a>
 
         <nav className="nav__links" aria-label="Principal">
-          {NAV.map((item) => (
+          {/* Em desktop, "Encomendar" sai da fila de links: está já ali ao
+              lado como botão, e ter a mesma palavra duas vezes na mesma
+              barra não é redundância inofensiva, é fazer o visitante
+              perguntar-se qual das duas faz o quê. No painel do telemóvel
+              continua, porque lá não há botão nenhum acima dele. */}
+          {NAV.filter((item) => item.href !== "/encomendar/").map((item) => (
             <a key={item.href} href={asset(item.href)} className="nav__link">
               {item.label}
             </a>

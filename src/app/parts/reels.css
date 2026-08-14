@@ -1,0 +1,33 @@
+/* =========================================================================
+   reels
+
+   Ficheiro de PARTE. Carregado no `layout.tsx` DEPOIS do `globals.css`,
+   e por isso ganha a ele em igualdade de especificidade. Existe para que
+   trabalhos em paralelo não colidam todos no mesmo ficheiro.
+
+   Regra: tudo dentro de `@layer components`, como no globals. Camadas
+   nativas juntam-se entre ficheiros, portanto isto entra na mesma camada
+   e as utilitárias do Tailwind continuam a ter a última palavra.
+   ========================================================================= */
+
+@layer components {
+  /* =========================================================================
+     OS COMANDOS DO CARTÃO EM FOCO POR CIMA DO VÍDEO
+
+     O vídeo leva `z-index: 1` para ficar acima da capa que está por baixo
+     dele. O botão do som e a linha dos gostos não levavam z-index nenhum:
+     ambos são posicionados, portanto `z-index: auto` vale zero e o vídeo,
+     que vem antes no HTML, passava a ser pintado POR CIMA dos dois.
+
+     Medido em captura: o recorte da caixa do `.cf__meta` no cartão em foco
+     dava só a imagem do vídeo, sem a barra escura e sem o texto branco, e
+     o do `.cf__som` a mesma coisa. Os dois existiam, respondiam ao rato
+     (a `.cf__media` tem `pointer-events: none`), e não se viam.
+
+     Dois e não um: têm de ficar acima do vídeo, e o vídeo já está em 1.
+     ========================================================================= */
+  .cf__som,
+  .cf__meta {
+    z-index: 2;
+  }
+}

@@ -1,0 +1,131 @@
+/* =========================================================================
+   sobre
+
+   Ficheiro de PARTE. Carregado no `layout.tsx` DEPOIS do `globals.css`,
+   e por isso ganha a ele em igualdade de especificidade. Existe para que
+   trabalhos em paralelo não colidam todos no mesmo ficheiro.
+
+   Regra: tudo dentro de `@layer components`, como no globals. Camadas
+   nativas juntam-se entre ficheiros, portanto isto entra na mesma camada
+   e as utilitárias do Tailwind continuam a ter a última palavra.
+   ========================================================================= */
+
+@layer components {
+  /* =======================================================================
+     A FOTOGRAFIA RASGADA
+
+     Máscara e não `clip-path`: um polígono com muitos pontos dá vértices
+     angulosos todos do mesmo tamanho, e isso lê-se como serrilha, não como
+     papel. A máscara leva um SVG com a aresta desenhada em bézier, com
+     reentrâncias de tamanhos diferentes, uns cortes rectos pelo meio e
+     cinco fibras finas a descair abaixo da aresta.
+
+     A curva não é periódica: a linha de base é a soma de quatro senos com
+     frequências incomensuráveis, mais desvio por vértice, mais
+     reentrâncias fundas tiradas à sorte. E não é simétrica: entra a cerca
+     de 40 unidades à esquerda e a 85 à direita, que é o que faz o rasgão
+     parecer arrancado de um lado para o outro.
+
+     A ORLA DA FIBRA são DUAS máscaras, não um contorno: o contentor
+     recorta pela curva A, a imagem recorta pela curva B, que é a mesma
+     curva um pouco acima e com desvio próprio, e pelo vão entre as duas
+     vê-se a chapa clara que está por baixo. Como a distância entre A e B
+     varia, e em alguns sítios B passa ABAIXO de A e a orla desaparece de
+     todo, a fibra tem falhas e espessura variável. Um contorno de largura
+     constante daria um autocolante.
+     ======================================================================= */
+
+  .foto-rasgada {
+    /* altura da faixa de ecrã onde o rasgão vive */
+    --rasgo-alt: clamp(40px, 6.6vw, 92px);
+    /* quanto se levanta a curva da imagem. Nos ecrãs pequenos a faixa toda
+       tem 40px, e sem isto a orla ficaria abaixo de 1px */
+    --rasgo-fibra-subida: 1.6px;
+    /* branco quente: a fibra do papel nunca é o branco do ecrã */
+    --rasgo-fibra-cor: oklch(0.985 0.016 82);
+    /* altura em que a foto nasce do azul da página */
+    --rasgo-fusao: clamp(90px, 15vw, 160px);
+
+    /* Quase a toda a largura, esteja dentro de uma caixa central ou não: a
+       margem negativa desfaz a caixa e o resto do `clamp` é o que sobra de
+       cada lado. No telemóvel dá zero, e a foto encosta às duas bordas. */
+    margin: 0 calc(50% - 50vw + clamp(0px, 2vw - 8px, 26px));
+    margin-block-end: clamp(16px, 2.6vw, 30px);
+  }
+
+  .foto-rasgada__folha {
+    position: relative;
+    /* a largura tem de ser dita: com `aspect-ratio` e um tecto de altura,
+       o Chrome encolhia a caixa para 999px em vez de ocupar a linha toda */
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    max-height: min(74svh, 700px);
+
+    mask-image: linear-gradient(black, black), url(
+      "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201200%20120'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0,48.1L45.8,59.9C56.3,59.6%2071.2,47.9%2079.9,45.8C88.5,43.8%20104.2,45.3%20111.8,44.4L113.2,56L115.1,72.1L117.4,58.2L119.7,45.9C119.4,43.4%20129.4,34.7%20137.8,38.5C146.1,42.3%20167.6,70.3%20175.4,73.3L197.1,61.3L235,58.9L249,50.2C256,50%20280,57.7%20288.6,57C297.3,56.3%20306.8,44.6%20314.7,44.7C322.7,44.8%20340.4,57.3%20348.8,57.8C357.3,58.3%20373.3,50.4%20379.1,48.8C385,47.2%20387.4,46.7%20393.5,45.9L394.6,50.4L395,56.8L397.8,51.3L399.7,47.4C399.7,45.1%20416,45.3%20425.9,42.8C435.8,40.3%20461,27.4%20468.7,27L484.1,39.9L517.7,35.4C526.1,34.7%20540.7,33.7%20548.1,34.8C555.6,35.9%20568.8,42.5%20574.4,43.9C579.9,45.3%20586.8,47.7%20590.5,45.5C594.3,43.4%20598.1,27.4%20603,27.5C608,27.6%20623.4,40%20628.3,46.3L629.4,59.7L626.1,78.2L632.9,62.2L635.3,47.8C633.1,52.6%20636.3,75%20640,75.2C643.7,75.5%20649.5,50.1%20656.3,48.3L691.4,61.5L717.7,65.5L751.9,65.2C759.4,65%20768.4,63.9%20774.2,63.8L775.7,76.3L777,93.5L780.2,78.6L782.9,65.3L795.4,64.4L826.9,66.2C836.5,67.4%20857.3,73.8%20868.8,73.6C880.2,73.4%20905.3,66.8%20913.8,65C922.4,63.1%20928.9,61.1%20933.9,59.7L935.6,68.5L935.1,80.8L940.2,70.2L942.6,61.2L952.2,54.4L975.5,52.5C984.6,55.5%201010.9,73.4%201020.9,77.4L1051.7,82.7L1063,89.5C1067.2,90%201077.6,85.5%201083.6,86.5C1089.5,87.5%201098.9,97.7%201108.1,96.8C1117.3,96%201143,81%201153.5,80L1188.2,89.7L1200,92.1L1200,0L0,0Z'%20fill='%23000'/%3E%3C/svg%3E"
+    );
+    mask-size:
+      100% calc(100% - var(--rasgo-alt)),
+      100% var(--rasgo-alt);
+    mask-position:
+      0 0,
+      0 100%;
+    mask-repeat: no-repeat;
+  }
+
+  /* A chapa clara que se vê pelo vão entre as duas curvas. Vive por baixo
+     da imagem e só na faixa do rasgão, para que a imagem possa esbater-se
+     no topo sem encontrar aqui um fundo pintado. */
+  .foto-rasgada__fibra {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: calc(var(--rasgo-alt) + 2px);
+    background: var(--rasgo-fibra-cor);
+  }
+
+  .foto-rasgada__img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* os dois estão a meio da fotografia, um pouco acima do centro */
+    object-position: 50% 42%;
+
+    /* Três camadas: a de cima corta o topo em desvanecimento e por isso
+       entra em `intersect`; as outras duas somam-se e dão a folha rasgada.
+       O topo esbate-se na PÁGINA, não numa chapa da cor da página: o
+       fundo do site tem brilhos por cima do `--paper` e uma chapa lisa
+       deixava-se ver como uma barra ligeiramente mais escura. */
+    mask-image:
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        color-mix(in srgb, black 20%, transparent) calc(var(--rasgo-fusao) * 0.3),
+        color-mix(in srgb, black 62%, transparent) calc(var(--rasgo-fusao) * 0.64),
+        black var(--rasgo-fusao)
+      ),
+      linear-gradient(black, black),
+      url(
+      "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201200%20120'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0,45.9L45.8,56.9C56.3,56.8%2071.2,47.2%2079.9,44.9C88.5,42.6%20104.2,40.9%20111.8,39.5L113.2,48.6L115.1,61.1L117.4,50.3L119.7,41C119.4,38.1%20129.4,30.1%20137.8,34.4C146.1,38.6%20167.6,68.1%20175.4,72L197.1,64.5L235,55.9L249,44.4C256,43.8%20280,51.4%20288.6,51.2C297.3,51.1%20306.8,43.2%20314.7,43.6C322.7,43.9%20340.4,53.3%20348.8,53.7C357.3,54.2%20373.3,48.1%20379.1,46.9C385,45.7%20387.4,45.5%20393.5,44.3L394.6,47.9L395,52.8L397.8,48.5L399.7,45.8C399.7,43.1%20416,40.8%20425.9,38.1C435.8,35.3%20461,23.4%20468.7,23.3L484.1,37.5L517.7,38.1C526.1,38.3%20540.7,38%20548.1,38.3C555.6,38.7%20568.8,40.8%20574.4,41C579.9,41.2%20586.8,41.8%20590.5,39.6C594.3,37.3%20598.1,24%20603,24.2C608,24.4%20623.4,35.5%20628.3,41.4L629.4,51.8L626.1,66.2L632.9,53.8L635.3,42.9C633.1,47.3%20636.3,68.6%20640,68.7C643.7,68.8%20649.5,43.3%20656.3,42.1L691.4,59.5L717.7,68.7L751.9,64.2C759.4,63.2%20768.4,60.9%20774.2,61.4L775.7,71.1L777,84.6L780.2,73L782.9,62.9L795.4,67.7L826.9,65.3C836.5,66.4%20857.3,76.9%20868.8,76.3C880.2,75.7%20905.3,63.2%20913.8,60.6C922.4,58%20928.9,58.3%20933.9,56.8L935.6,63.7L935.1,73.3L940.2,65.1L942.6,58.3L952.2,49.5L975.5,49.6C984.6,52.8%201010.9,69.6%201020.9,73.7L1051.7,80.7L1063,83.9C1067.2,83.9%201077.6,79.7%201083.6,80.9C1089.5,82.1%201098.9,93.3%201108.1,93C1117.3,92.7%201143,80%201153.5,78.7L1188.2,83.5L1200,88.8L1200,0L0,0Z'%20fill='%23000'/%3E%3C/svg%3E"
+    );
+    mask-size:
+      100% 100%,
+      100% calc(100% - var(--rasgo-alt)),
+      100% var(--rasgo-alt);
+    mask-position:
+      0 0,
+      0 0,
+      0 calc(100% - var(--rasgo-fibra-subida));
+    mask-repeat: no-repeat;
+    mask-composite: intersect, add, add;
+  }
+
+  /* A partir do tablet a faixa já tem altura que chegue para a diferença
+     entre as duas curvas dar a orla sozinha. */
+  @media (min-width: 900px) {
+    .foto-rasgada {
+      --rasgo-fibra-subida: 0px;
+    }
+  }
+}

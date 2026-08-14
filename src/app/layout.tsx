@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Newsreader, Outfit } from "next/font/google";
 import "./globals.css";
+/* Depois do globals, de propósito: são partes que o sobrepõem. */
+import "./parts/navbar.css";
+import "./parts/sobre.css";
+import "./parts/passos.css";
+import "./parts/reels.css";
 import { asset } from "@/lib/asset";
 import { BRAND } from "@/content/site";
 import Reveal from "@/components/reveal";
