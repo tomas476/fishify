@@ -51,7 +51,10 @@ export default function Home() {
       <section className="section--tight pt-0" id="quem-somos">
         <FotoRasgada />
 
-        <div className="shell mt-[clamp(28px,6vw,56px)]">
+        {/* `relative` e `z-10`: o título sobe para dentro da faixa do
+            rasgão por margem negativa da fotografia, e sem isto ficava
+            por baixo dela. */}
+        <div className="shell relative z-10">
           <Historia />
         </div>
       </section>
